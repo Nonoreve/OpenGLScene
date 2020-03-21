@@ -1,0 +1,21 @@
+# ninja log v5
+1	117	1545425211	bin/Shaders/color.vert	96392210bcd1e562
+1	117	1545425211	bin/Shaders/color.frag	132883bc0eb56822
+118	758	1545425211	CMakeFiles/Graphics_Squelette.dir/src/Cube.cpp.o	5c0027d1fb5a8d60
+120	763	1545425211	CMakeFiles/Graphics_Squelette.dir/src/Geometry.cpp.o	85c9b73c7d267342
+117	992	1545425212	CMakeFiles/Graphics_Squelette.dir/src/Circle.cpp.o	91d516e2cbed0c7d
+119	1361	1545425212	CMakeFiles/Graphics_Squelette.dir/src/Cylinder.cpp.o	8a10ee950508ca65
+121	3103	1545425214	CMakeFiles/Graphics_Squelette.dir/src/Shader.cpp.o	5d2fc859c4050341
+762	3458	1545425214	CMakeFiles/Graphics_Squelette.dir/src/Sphere.cpp.o	956731cad4287234
+118	3594	1545425214	CMakeFiles/Graphics_Squelette.dir/src/Cone.cpp.o	3225daef86d7dd9d
+19	135	1545425288	CMakeFiles/Graphics_Squelette.dir/src/Geometry.cpp.o	bba46b105dc9ff20
+14	211	1545425288	CMakeFiles/Graphics_Squelette.dir/src/Cube.cpp.o	de97b290845f1aa0
+15	253	1545425288	CMakeFiles/Graphics_Squelette.dir/src/Cylinder.cpp.o	738b4cea1e5764f5
+13	335	1545425288	CMakeFiles/Graphics_Squelette.dir/src/Circle.cpp.o	5fd891de7fcc0ce8
+22	918	1545425289	CMakeFiles/Graphics_Squelette.dir/src/Shader.cpp.o	e9917d021dcd6443
+136	1754	1545425290	CMakeFiles/Graphics_Squelette.dir/src/Sphere.cpp.o	2f9f631eee96dbdd
+14	1878	1545425290	CMakeFiles/Graphics_Squelette.dir/src/Cone.cpp.o	ece0f7e2c4483739
+211	2291	1545425290	CMakeFiles/Graphics_Squelette.dir/src/main.cpp.o	c2344ef2a58743e3
+2296	2834	1545425291	bin/Graphics_Squelette	a514a3132044fa51
+4	1064	1545425510	CMakeFiles/Graphics_Squelette.dir/src/main.cpp.o	c2344ef2a58743e3
+1064	1214	1545425510	bin/Graphics_Squelette	a514a3132044fa51
