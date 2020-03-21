@@ -7,4 +7,6 @@ compile_commands.json
 Graphics_Squelette.kdevelop
 Graphics_Squelette.kdevelop.filelist
 Graphics_Squelette.kdevses
+.kdev4/
 Makefile
+OpenGLScene.kdev4
