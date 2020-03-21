@@ -55,17 +55,25 @@ else()
     MESSAGE(STATUS "Compiling for Linux/Unix")
     SET(GLEW_INCLUDE_PATH       /usr/include  CACHE PATH "Path to GLEW include location")
     SET(SDL2_INCLUDE_PATH       /usr/include  CACHE PATH "Path to SDL2 library location")
-    SET(SDL2_LIBRARY_PATH       /usr/lib      CACHE PATH "Path to SDL2 include location")
-    SET(GLEW_LIBRARY_PATH       /usr/lib      CACHE PATH "Path to GLEW library location")    
-    SET(GL_LIBRARY_PATH         /usr/lib      CACHE PATH "Path to GL   library location")
+    SET(SDL2_LIBRARY_PATH       /usr/lib/x86_64-linux-gnu      CACHE PATH "Path to SDL2 include location")
+    SET(GLEW_LIBRARY_PATH       /usr/lib/x86_64-linux-gnu      CACHE PATH "Path to GLEW library location")    
+    SET(GL_LIBRARY_PATH         /usr/lib/x86_64-linux-gnu      CACHE PATH "Path to GL   library location")
     SET(GL_INCLUDE_PATH         /usr/include  CACHE PATH "Path to GL   include location")
-    SET(SDL2_IMAGE_LIBRARY_PATH /usr/lib      CACHE PATH "Path to SDL2 IMAGE library location")
+    SET(SDL2_IMAGE_LIBRARY_PATH /usr/lib/x86_64-linux-gnu      CACHE PATH "Path to SDL2 IMAGE library location")
     SET(SDL2_IMAGE_INCLUDE_PATH /usr/include/ CACHE PATH "Path to SDL2 IMAGE include location")
 
 
     if((NOT EXISTS "${GL_LIBRARY_PATH}/libGL.so" ) AND (NOT EXISTS "${GL_LIBRARY_PATH}/GL.dll" ))
         MESSAGE(FATAL_ERROR "Could not find libGL in ${GL_LIBRARY_PATH}")
     endif()
+    
+    # OpenGL
+	FIND_PACKAGE(OpenGL REQUIRED)
+	if(NOT OPENGL_FOUND)
+		message(ERROR " OPENGL not found!")
+	endif(NOT OPENGL_FOUND)
+ 
+	SET(LIBRARIES ${LIBRARIES} ${OPENGL_LIBRARIES})
 endif()
 
 #Workaround for MSVC not creating DEBUG and RELEASE folder
