@@ -21,6 +21,7 @@
 #include "vertexbuffer.h"
 #include "indexbuffer.h"
 #include "vertexarray.h"
+#include "vertexbufferlayout.h"
 
 Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
 
@@ -105,18 +106,18 @@ int main(int argc, char* argv[]) {
 		IndexBuffer ib(indices, 6);
 
 		auto shader = setupShaders("Shaders/color.vert", "Shaders/color.frag");
-		GLCall(glUseProgram(shader->getProgramID()));
+		shader->Bind();
 
-		GLCall(int location = glGetUniformLocation(shader->getProgramID(), "u_Color"));
-		ASSERT(location != -1);
-		GLCall(glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f));
+		shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
 
 		float r = 0.0f;
 		float increment = 0.05f;
 
-		GLCall(glUseProgram(0));
-		GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+		shader->Unbind();
+		vb.Unbind();
+		ib.Unbind();
+		
+		Renderer renderer;
 
 
 		bool isOpened = true;
@@ -141,18 +142,15 @@ int main(int argc, char* argv[]) {
 					//We can add more event, like listening for the keyboard or the mouse. See SDL_Event documentation for more details
 				}
 			}
+			
+			
+			renderer.Clear();
 
-			//Clear the screen : the depth buffer and the color buffer
-			GLCall(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
+			shader->Bind();
+			shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
+			renderer.Draw(va, ib, Shader(*shader));
 
-			GLCall(glUseProgram(shader->getProgramID()));
-			GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
-
-			va.Bind();
-			ib.Bind();
-
-			GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
 			if (r > 1.0f)
 				increment = -0.05f;
@@ -172,7 +170,7 @@ int main(int argc, char* argv[]) {
 			if (timeEnd - timeBegin < TIME_PER_FRAME_MS)
 				SDL_Delay(TIME_PER_FRAME_MS - (timeEnd - timeBegin));
 		}
-	}
+	} // inner scope to call all destructors before SDL_GL_DeleteContext
 	//Free everything
 	if (context != NULL)
 		SDL_GL_DeleteContext(context);

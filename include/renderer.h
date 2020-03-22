@@ -19,6 +19,9 @@
 
 #include <GL/glew.h>
 #include <csignal>
+#include "Shader.h"
+#include "vertexarray.h"
+#include "indexbuffer.h"
 
 #define WIDTH     800
 #define HEIGHT    600
@@ -34,5 +37,11 @@ ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 void GLClearError();
 
 bool GLLogCall(const char* function, const char* file, int line);
+
+class Renderer{
+public:
+	void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+	void Clear() const;
+};
 
 #endif // RENDERER_H

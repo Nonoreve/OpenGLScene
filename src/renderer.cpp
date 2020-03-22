@@ -16,14 +16,25 @@
 #include <iostream>
 #include "renderer.h"
 
-void GLClearError(){
-	while(glGetError() != GL_NO_ERROR);
+void GLClearError() {
+	while (glGetError() != GL_NO_ERROR);
 }
 
-bool GLLogCall(const char* function, const char* file, int line){
-	while(GLenum error = glGetError()){
+bool GLLogCall(const char* function, const char* file, int line) {
+	while (GLenum error = glGetError()) {
 		std::cerr << "[OpenGL Error] (0x0" << std::hex << error << std::dec << ") " << function << "\n\t" << file << " : " << line << std::endl;
 		return false;
 	}
 	return true;
+}
+
+void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const {
+	shader.Bind();
+	va.Bind();
+	ib.Bind();
+	GLCall(glDrawElements(GL_TRIANGLES, ib.getCount(), GL_UNSIGNED_INT, nullptr));
+}
+void Renderer::Clear() const{
+	//Clear the screen : the depth buffer and the color buffer
+	GLCall(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
 }

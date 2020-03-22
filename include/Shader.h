@@ -7,6 +7,7 @@
 #include <GL/gl.h>
 #include <iostream>
 #include <cstdlib>
+#include <unordered_map>
 #include "logger.h"
 
 /** \brief A graphic program.*/
@@ -30,6 +31,12 @@ class Shader
         /** \brief get the fragment ID stored in the graphic memory of this shader.
          * \return the fragment ID */
         int getFragID() const;
+		
+		void Bind() const;
+		void Unbind() const;
+		
+		int GetUniformLocation(const std::string& name);
+		void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
 
         /** \brief create a shader from a vertex and a fragment file.
          * \param vertexFile the vertex file.
@@ -49,6 +56,7 @@ class Shader
         GLuint m_programID; /*!< The shader   program ID*/
         GLuint m_vertexID;  /*!< The vertex   shader  ID*/
         GLuint m_fragID;    /*!< The fragment shader  ID*/
+        std::unordered_map<std::string, unsigned int> m_UniformLocationCache;
 
         /* \brief Bind the attributes to known locations (vPosition to 0, vColor to 1 for example)*/
         virtual void bindAttributes();
