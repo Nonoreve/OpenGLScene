@@ -125,17 +125,18 @@ target_compile_definitions(Graphics_Squelette PUBLIC _USE_MATH_DEFINES)
 #TODO add another -I parameter (include directory to take account to) and a -l parameter (libraries to link to)
 #Normally you have just to modify the target_compile_options
 
-if(MINGW)
-    target_compile_options(Graphics_Squelette PUBLIC
-        -I${SDL2_INCLUDE_PATH}
-        -I${SDL2_IMAGE_INCLUDE_PATH}
-        -I${GLEW_INCLUDE_PATH}
-        -I${GL_INCLUDE_PATH})
+target_include_directories(Graphics_Squelette PUBLIC
+        ${SDL2_INCLUDE_PATH}
+        ${SDL2_IMAGE_INCLUDE_PATH}
+        ${GLEW_INCLUDE_PATH}
+        ${GL_INCLUDE_PATH})
 
+if(MINGW)
     target_link_libraries(Graphics_Squelette PUBLIC
         -lOpenGL32
         -lglew32
-        -lSDL2)
+        -lSDL2
+        -lSDL2_image)
 
     #Scripts to copy to bin/
     file(GLOB BINRESOURCES ${CMAKE_SOURCE_DIR}/libs/VS/x86/*.dll ${CMAKE_SOURCE_DIR}/libs/VS/x86/*.lib)
@@ -160,17 +161,12 @@ if(MINGW)
     add_dependencies(Graphics_Squelette BinTarget)
 
 elseif(MSVC)
-    target_compile_options(Graphics_Squelette PUBLIC
-        -I${SDL2_IMAGE_INCLUDE_PATH}
-        -I${SDL2_INCLUDE_PATH}
-        -I${GLEW_INCLUDE_PATH}
-        -I${GL_INCLUDE_PATH})
-
     target_link_libraries(Graphics_Squelette general
         "OpenGL32.lib"
         "glew32.lib"
         "SDL2.lib"
-        "SDL2main.lib")
+        "SDL2main.lib"
+        "SDL2_image.lib")
 
     #Scripts to copy to bin/
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -198,16 +194,11 @@ elseif(MSVC)
     add_custom_target(BinTarget DEPENDS ${BinOutput})
     add_dependencies(Graphics_Squelette BinTarget)
 else()
-    target_compile_options(Graphics_Squelette PUBLIC
-        -I${SDL2_INCLUDE_PATH}
-        -I${SDL2_IMAGE_INCLUDE_PATH}
-        -I${GLEW_INCLUDE_PATH}
-        -I${GL_INCLUDE_PATH})
-
     target_link_libraries(Graphics_Squelette PUBLIC
         -lGL
         -lGLEW
-        -lSDL2)
+        -lSDL2
+        -lSDL2_image)
 endif()
 
 

@@ -14,25 +14,31 @@
  * limitations under the License.
  */
 
-#ifndef VERTEXARRAY_H
-#define VERTEXARRAY_H
+#ifndef TEXTURE_H
+#define TEXTURE_H
 
-#include "vertexbuffer.h"
+#include "renderer.h"
+#include <SDL2/SDL_image.h>
 
-class VertexBufferLayout;
+#define __RESSOURCE_FILE "../resources/"
+#define RESOURCE_FILE(x) __RESSOURCE_FILE x
 
-class VertexArray {
+class Texture {
 private:
 	unsigned int m_RendererID;
+	std::string m_FilePath;
+	SDL_Surface* m_LocalBuffer;
+	int m_Width, m_Height, m_BPP;
 	
 public:
-	VertexArray();
-	~VertexArray();
+	Texture(const std::string& path);
+	~Texture();
 	
-	void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
-	
-	void Bind() const;
+	void Bind(unsigned int slot = 0) const;
 	void Unbind() const;
+	
+	inline int GetWidth() const {return m_Width;}
+	inline int GetHeight() const {return m_Height;}
 };
 
-#endif // VERTEXARRAY_H
+#endif // TEXTURE_H

@@ -3,6 +3,7 @@
 //SDL Libraries
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
+#include <SDL2/SDL_image.h>
 
 //OpenGL Libraries
 #include <GL/glew.h>
@@ -22,6 +23,7 @@
 #include "indexbuffer.h"
 #include "vertexarray.h"
 #include "vertexbufferlayout.h"
+#include "texture.h"
 
 Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
 
@@ -50,6 +52,12 @@ int main(int argc, char* argv[]) {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		ERROR("The initialization of the SDL failed : %s\n", SDL_GetError());
 		return 0;
+	}
+
+	//init SDL_image
+	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+		ERROR("Could not load SDL_image.\n");
+		return EXIT_FAILURE;
 	}
 
 	//Create a Window
@@ -82,14 +90,22 @@ int main(int argc, char* argv[]) {
 
 		GLCall(glEnable(GL_DEPTH_TEST)); //Active the depth test
 
-
+		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+		GLCall(glEnable(GL_BLEND));
+		
 		float positions[] = {
-			-0.5f, -0.5f,
-			0.5f, -0.5f,
-			0.5f,  0.5f,
-
-			-0.5f,  0.5f
+			-0.5f, -0.5f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 1.0f, 0.0f,
+			 0.5f,  0.5f, 1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f, 1.0f
 		};
+
+// 		float texturesPositions[] = {
+// 			0.0f, 0.0f,
+// 			1.0f, 0.0f,
+// 			1.0f, 1.0f,
+// 			0.0f, 1.0f
+// 		};
 
 		unsigned int indices[] = {
 			0, 1, 2,
@@ -97,9 +113,10 @@ int main(int argc, char* argv[]) {
 		};
 
 		VertexArray va;
-		VertexBuffer vb(positions, 4 * 2 * sizeof(float));
-		
+		VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+
 		VertexBufferLayout layout;
+		layout.Push<float>(2);
 		layout.Push<float>(2);
 		va.addBuffer(vb, layout);
 
@@ -108,7 +125,11 @@ int main(int argc, char* argv[]) {
 		auto shader = setupShaders("Shaders/color.vert", "Shaders/color.frag");
 		shader->Bind();
 
-		shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+		//shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+
+		Texture texture(RESOURCE_FILE("NonoreveLogo.png"));
+		texture.Bind();
+		shader->SetUniform1i("u_Texture", 0);
 
 		float r = 0.0f;
 		float increment = 0.05f;
@@ -116,7 +137,7 @@ int main(int argc, char* argv[]) {
 		shader->Unbind();
 		vb.Unbind();
 		ib.Unbind();
-		
+
 		Renderer renderer;
 
 
@@ -142,12 +163,12 @@ int main(int argc, char* argv[]) {
 					//We can add more event, like listening for the keyboard or the mouse. See SDL_Event documentation for more details
 				}
 			}
-			
-			
+
+
 			renderer.Clear();
 
 			shader->Bind();
-			shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+			//shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
 			renderer.Draw(va, ib, Shader(*shader));
 
