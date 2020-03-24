@@ -23,8 +23,9 @@
 #include "vertexarray.h"
 #include "indexbuffer.h"
 
-#define WIDTH     800
-#define HEIGHT    600
+#define HEIGHT     640
+#define GOLDEN_RATIO 1.618
+#define WIDTH    (int)HEIGHT * GOLDEN_RATIO
 #define FRAMERATE 60
 #define TIME_PER_FRAME_MS  (1.0f/FRAMERATE * 1e3)
 #define INDICE_TO_PTR(x) ((void*)(x))

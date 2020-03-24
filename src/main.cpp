@@ -94,10 +94,10 @@ int main(int argc, char* argv[]) {
 		GLCall(glEnable(GL_BLEND));
 		
 		float positions[] = {
-			-0.5f, -0.5f, 0.0f, 0.0f,
-			 0.5f, -0.5f, 1.0f, 0.0f,
-			 0.5f,  0.5f, 1.0f, 1.0f,
-			-0.5f,  0.5f, 0.0f, 1.0f
+			100.0f, 100.0f, 0.0f, 0.0f,
+			200.0f, 100.0f, 1.0f, 0.0f,
+			200.0f, 200.0f, 1.0f, 1.0f,
+			100.0f, 200.0f, 0.0f, 1.0f
 		};
 
 // 		float texturesPositions[] = {
@@ -121,11 +121,18 @@ int main(int argc, char* argv[]) {
 		va.addBuffer(vb, layout);
 
 		IndexBuffer ib(indices, 6);
+		
+		glm::mat4 proj = glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -1.0f, 1.0f);
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+		
+		glm::mat4 mvp = proj * view * model;
 
 		auto shader = setupShaders("Shaders/color.vert", "Shaders/color.frag");
 		shader->Bind();
 
-		//shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+		shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+		shader->SetUniformMat4f("u_MVP", mvp);
 
 		Texture texture(RESOURCE_FILE("NonoreveLogo.png"));
 		texture.Bind();

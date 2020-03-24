@@ -40,7 +40,7 @@ Texture::Texture(const std::string& path) : m_FilePath(path), m_LocalBuffer(null
 	const unsigned int SIZE_ROW = m_Width * 4;
 	for(int row = 0; row < m_Height; row++){
 		// copying an entire row
-		memcpy(flippedImg + (m_Height - row) * SIZE_ROW, (unsigned char*)m_LocalBuffer->pixels + row * SIZE_ROW, SIZE_ROW);
+		memcpy(flippedImg + (m_Height - row - 1) * SIZE_ROW, (unsigned char*)m_LocalBuffer->pixels + row * SIZE_ROW, SIZE_ROW);
 	}
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)flippedImg);
 
