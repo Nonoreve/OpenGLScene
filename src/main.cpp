@@ -35,11 +35,13 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
 	}
 
 	auto shader = Shader::loadFromFiles(vertexShader, fragmentShader);
+	fclose(fragmentShader);
+	fclose(vertexShader);
 // 	shader = Shader::loadFromStrings(
 // 		"#version 330 core\nlayout(location = 0) in vec4 position;\nvoid main(){gl_Position = position;}",
 // 		"#version 330 core\nlayout(location = 0) out vec4 color;\nvoid main(){color = vec4(1.0, 0.0, 0.0, 1.0);}");
 	if (shader == 0)
-		exit(-1);
+		exit(EXIT_FAILURE);
 	return shader;
 }
 
@@ -92,12 +94,12 @@ int main(int argc, char* argv[]) {
 
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCall(glEnable(GL_BLEND));
-		
+
 		float positions[] = {
-			100.0f, 100.0f, 0.0f, 0.0f,
-			200.0f, 100.0f, 1.0f, 0.0f,
-			200.0f, 200.0f, 1.0f, 1.0f,
-			100.0f, 200.0f, 0.0f, 1.0f
+			-50.0f, -50.0f, 0.0f, 0.0f,
+			50.0f, -50.0f, 1.0f, 0.0f,
+			50.0f,  50.0f, 1.0f, 1.0f,
+			-50.0f,  50.0f, 0.0f, 1.0f
 		};
 
 // 		float texturesPositions[] = {
@@ -121,22 +123,21 @@ int main(int argc, char* argv[]) {
 		va.addBuffer(vb, layout);
 
 		IndexBuffer ib(indices, 6);
-		
+
 		glm::mat4 proj = glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -1.0f, 1.0f);
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
-		
-		glm::mat4 mvp = proj * view * model;
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
 		auto shader = setupShaders("Shaders/color.vert", "Shaders/color.frag");
 		shader->Bind();
 
 		shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-		shader->SetUniformMat4f("u_MVP", mvp);
 
 		Texture texture(RESOURCE_FILE("NonoreveLogo.png"));
 		texture.Bind();
 		shader->SetUniform1i("u_Texture", 0);
+
+		glm::vec3 translationA(420, 69, 0);
+		glm::vec3 translationB(69, 420, 0);
 
 		float r = 0.0f;
 		float increment = 0.05f;
@@ -174,10 +175,26 @@ int main(int argc, char* argv[]) {
 
 			renderer.Clear();
 
-			shader->Bind();
-			//shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-			renderer.Draw(va, ib, Shader(*shader));
+
+			shader->Bind();
+			{
+				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+				glm::mat4 mvp = proj * view * model;
+				//shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+				shader->SetUniformMat4f("u_MVP", mvp);
+
+				renderer.Draw(va, ib, Shader(*shader));
+			}
+
+			{
+				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
+				glm::mat4 mvp = proj * view * model;
+				//shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+				shader->SetUniformMat4f("u_MVP", mvp);
+				
+				renderer.Draw(va, ib, Shader(*shader));
+			}
 
 
 			if (r > 1.0f)

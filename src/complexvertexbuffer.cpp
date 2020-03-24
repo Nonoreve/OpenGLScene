@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Nonoreve noe.boonstra@gmail.com
+ * Copyright 2020 <copyright holder> <email>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
+#include "complexvertexbuffer.h"
 #include <iostream>
-#include "vertexbuffer.h"
 #include "renderer.h"
 
-VertexBuffer::VertexBuffer(const void* data, unsigned int size){
-	GLCall(glGenBuffers(1, &m_RendererID));
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW));
-}
-
-VertexBuffer::VertexBuffer::~VertexBuffer(){
-	GLCall(glDeleteBuffers(1, &m_RendererID));
-}
-
-void VertexBuffer::Bind() const{
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
-}
-
-void VertexBuffer::Unbind() const{
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+ComplexVertexBuffer::ComplexVertexBuffer(unsigned int size, int count, ...) : VertexBuffer(NULL, size){
+	va_list args;
+	unsigned int offset = 0;
+	va_start(args, count);
+	for(int i = 0; i < count; i++){
+		SubData bufData = va_arg(args, SubData);
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, bufData.size, bufData.data));
+		offset += bufData.size;
+	}
+	va_end(args);
 }
