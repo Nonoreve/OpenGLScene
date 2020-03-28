@@ -23,12 +23,13 @@
 /**
  * A vertex buffer made of several data arrays. Use of glBufferSubData();
  */
-class ComplexVertexBuffer :  VertexBuffer {
-	ComplexVertexBuffer(unsigned int size, int count, ...);
+class ComplexVertexBuffer : public VertexBuffer {
+public :
+	ComplexVertexBuffer(unsigned int size, unsigned int elements, int count, ...);
 };
 
 struct SubData{
 	unsigned int size;
 	const void* data;
-}
+};
 #endif // COMPLEXVERTEXBUFFER_H

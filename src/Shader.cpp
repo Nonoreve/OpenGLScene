@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include "renderer.h"
 #include <glm/gtc/type_ptr.hpp>
+#include <cstdarg>
 
 Shader::Shader() : m_programID(0), m_vertexID(0), m_fragID(0) {
 }
@@ -57,7 +58,7 @@ Shader* Shader::loadFromStrings(const std::string& vertexString, const std::stri
 	glAttachShader(shader->m_programID, shader->m_fragID);
 
 	/* Do the attributes binding */
-	shader->bindAttributes();
+	// shader->bindAttributes(); // done manually to pass the names
 
 	/* Link the program. */
 	glLinkProgram(shader->m_programID);
@@ -114,7 +115,14 @@ int Shader::getFragID() const {
 	return m_fragID;
 }
 
-void Shader::bindAttributes() {
+void Shader::bindAttributes(unsigned int count, ...) {
+	va_list args;
+	va_start(args, count);
+	for (int i = 0; i < count; i++) {
+		const char* name = va_arg(args, const char*);
+		GLCall(glBindAttribLocation(m_programID, i, name));
+	}
+	va_end(args);
 }
 
 void Shader::Bind() const {

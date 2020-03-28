@@ -30,6 +30,7 @@ public:
 	~VertexArray();
 	
 	void addBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
+	void addPackedBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
 	
 	void Bind() const;
 	void Unbind() const;
