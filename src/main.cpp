@@ -24,6 +24,7 @@
 #include "buffer/vertexbufferlayout.h"
 #include "vertexarray.h"
 #include "texture.h"
+#include "material.h"
 
 #define _2D 2
 #define _3D 3
