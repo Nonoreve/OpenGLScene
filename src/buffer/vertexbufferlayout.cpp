@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "vertexbufferlayout.h"
+#include "buffer/vertexbufferlayout.h"
 
 template<>
 void VertexBufferLayout::Push<float>(unsigned int count){

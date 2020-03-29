@@ -16,14 +16,13 @@
 
 #include "Shader.h"
 #include "logger.h"
-
 #include "renderer.h"
 
-#include "vertexbuffer.h"
-#include "complexvertexbuffer.h"
-#include "indexbuffer.h"
+#include "buffer/vertexbuffer.h"
+#include "buffer/complexvertexbuffer.h"
+#include "buffer/indexbuffer.h"
+#include "buffer/vertexbufferlayout.h"
 #include "vertexarray.h"
-#include "vertexbufferlayout.h"
 #include "texture.h"
 
 #define _2D 2

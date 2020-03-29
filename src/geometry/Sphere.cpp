@@ -1,4 +1,4 @@
-#include "Sphere.h"
+#include "geometry/Sphere.h"
 
 Sphere::Sphere(uint32_t nbLatitude, uint32_t nbLongitude)
 {

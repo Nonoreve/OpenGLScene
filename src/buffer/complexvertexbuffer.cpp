@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "complexvertexbuffer.h"
+#include "buffer/complexvertexbuffer.h"
 #include <iostream>
 #include "renderer.h"
 

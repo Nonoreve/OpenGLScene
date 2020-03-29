@@ -21,7 +21,7 @@
 #include <csignal>
 #include "Shader.h"
 #include "vertexarray.h"
-#include "indexbuffer.h"
+#include "buffer/indexbuffer.h"
 
 #define HEIGHT     640
 #define GOLDEN_RATIO 1.618

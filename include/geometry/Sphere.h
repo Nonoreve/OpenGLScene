@@ -1,7 +1,7 @@
 #ifndef  SPHERE_INC
 #define  SPHERE_INC
 
-#include "Geometry.h"
+#include "geometry/Geometry.h"
 #include <cmath>
 #include <glm/glm.hpp>
 

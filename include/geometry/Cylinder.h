@@ -1,7 +1,7 @@
 #ifndef  CYLINDER_INC
 #define  CYLINDER_INC
 
-#include "Geometry.h"
+#include "geometry/Geometry.h"
 #include <cmath>
 
 /* \brief Represents a Cylinder WITHOUT THE TOP AND BOTTOM CIRCLES ! */

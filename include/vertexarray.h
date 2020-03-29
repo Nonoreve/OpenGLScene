@@ -17,7 +17,7 @@
 #ifndef VERTEXARRAY_H
 #define VERTEXARRAY_H
 
-#include "vertexbuffer.h"
+#include "buffer/vertexbuffer.h"
 
 class VertexBufferLayout;
 

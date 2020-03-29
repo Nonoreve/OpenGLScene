@@ -1,4 +1,4 @@
-#include "Cube.h"
+#include "geometry/Cube.h"
 
 Cube::Cube() : Geometry()
 {

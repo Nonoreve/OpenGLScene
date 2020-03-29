@@ -15,7 +15,7 @@
  */
 
 #include "vertexarray.h"
-#include "vertexbufferlayout.h"
+#include "buffer/vertexbufferlayout.h"
 #include "renderer.h"
 
 VertexArray::VertexArray() {

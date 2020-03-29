@@ -1,7 +1,7 @@
 #ifndef  CONE_INC
 #define  CONE_INC
 
-#include "Geometry.h"
+#include "geometry/Geometry.h"
 #include <cmath>
 
 class Cone : public Geometry
