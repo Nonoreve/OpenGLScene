@@ -17,7 +17,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-#include "renderer.h"
+#include "rendering/renderer.h"
 #include <SDL2/SDL_image.h>
 
 #define __RESSOURCE_FILE "../resources/"

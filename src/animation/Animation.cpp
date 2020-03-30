@@ -14,18 +14,25 @@
  * limitations under the License.
  */
 
-#include "buffer/complexvertexbuffer.h"
+#include "animation/Animation.h"
+#include <glm/glm.hpp>
 #include <iostream>
-#include "rendering/renderer.h"
 
-ComplexVertexBuffer::ComplexVertexBuffer(unsigned int size, unsigned int elements, int count, ...) : VertexBuffer(NULL, size, elements) {
-	va_list args;
-	unsigned int offset = 0;
-	va_start(args, count);
-	for (int i = 0; i < count; i++) {
-		SubData bufData = va_arg(args, SubData);
-		GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, bufData.size, bufData.data));
-		offset += bufData.size;
+Animation::Animation(float startTime, float endTime, AnimAction* action) {
+	if(startTime > endTime) {
+		std::cerr << "le temps de debut doit etre avant celui de fin ..." << std::endl;
+		return;
 	}
-	va_end(args);
+	m_StartTime = startTime;
+	m_EndTime = endTime;
+	m_Action = action;
+}
+
+bool Animation::CheckAnimation(glm::mat4& matModif, float currentTime) {
+	if(currentTime > m_StartTime && currentTime < m_EndTime) {
+		m_Action->Action(matModif);
+	} else if(currentTime > m_EndTime) {
+		return false;
+	}
+	return true;
 }

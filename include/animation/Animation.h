@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-#include "buffer/complexvertexbuffer.h"
-#include <iostream>
-#include "rendering/renderer.h"
+#ifndef ANIMATION_H
+#define ANIMATION_H
 
-ComplexVertexBuffer::ComplexVertexBuffer(unsigned int size, unsigned int elements, int count, ...) : VertexBuffer(NULL, size, elements) {
-	va_list args;
-	unsigned int offset = 0;
-	va_start(args, count);
-	for (int i = 0; i < count; i++) {
-		SubData bufData = va_arg(args, SubData);
-		GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, bufData.size, bufData.data));
-		offset += bufData.size;
-	}
-	va_end(args);
-}
+#include "animation/animAction.h"
+
+class Animation {
+	private:
+		float m_StartTime;
+		float m_EndTime;
+		AnimAction* m_Action;
+
+	public:
+		Animation(float startTime, float endTime, AnimAction* action);
+		bool CheckAnimation(glm::mat4 &matModif, float currentTime);
+
+};
+
+#endif // ANIMATION_H

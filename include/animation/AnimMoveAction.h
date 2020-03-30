@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 <copyright holder> <email>
+ * Copyright 2020 Nonoreve and Kilian
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-#include "buffer/complexvertexbuffer.h"
-#include <iostream>
-#include "rendering/renderer.h"
+#ifndef ANIMMOVEACTION_H
+#define ANIMMOVEACTION_H
 
-ComplexVertexBuffer::ComplexVertexBuffer(unsigned int size, unsigned int elements, int count, ...) : VertexBuffer(NULL, size, elements) {
-	va_list args;
-	unsigned int offset = 0;
-	va_start(args, count);
-	for (int i = 0; i < count; i++) {
-		SubData bufData = va_arg(args, SubData);
-		GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, bufData.size, bufData.data));
-		offset += bufData.size;
-	}
-	va_end(args);
-}
+#include "animation/animAction.h"
+
+class AnimMoveAction : public AnimAction {
+	public:
+		void Action(glm::mat4& mat);
+};
+
+#endif // ANIMMOVEACTION_H

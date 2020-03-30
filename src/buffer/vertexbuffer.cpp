@@ -16,7 +16,7 @@
 
 #include <iostream>
 #include "buffer/vertexbuffer.h"
-#include "renderer.h"
+#include "rendering/renderer.h"
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size, unsigned int elements) : m_Elements(elements){
 	GLCall(glGenBuffers(1, &m_RendererID));

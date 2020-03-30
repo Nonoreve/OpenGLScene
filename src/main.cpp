@@ -14,17 +14,23 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Shader.h"
-#include "logger.h"
-#include "renderer.h"
+#include "animation/AnimMoveAction.h"
+#include "animation/AnimRotateAction.h"
+#include "animation/Animation.h"
 
-#include "buffer/vertexbuffer.h"
 #include "buffer/complexvertexbuffer.h"
 #include "buffer/indexbuffer.h"
 #include "buffer/vertexbufferlayout.h"
-#include "vertexarray.h"
-#include "texture.h"
+
+#include "rendering/Camera.h"
+#include "rendering/renderer.h"
+#include "rendering/RenderedObject.h"
+
+#include "light.h"
 #include "material.h"
+#include "Shader.h"
+#include "texture.h"
+#include "vertexarray.h"
 
 #define _2D 2
 #define _3D 3
@@ -36,7 +42,7 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
 
 	FILE* fragmentShader = fopen(fragmentPath, "r");
 	FILE* vertexShader = fopen(vertexPath, "r");
-	if (!fragmentShader || !vertexShader) {
+	if(!fragmentShader || !vertexShader) {
 		std::cerr << "Error opening shader files" << std::endl;
 		exit(1);
 	}
@@ -47,7 +53,7 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
 // 	shader = Shader::loadFromStrings(
 // 		"#version 330 core\nlayout(location = 0) in vec4 position;\nvoid main(){gl_Position = position;}",
 // 		"#version 330 core\nlayout(location = 0) out vec4 color;\nvoid main(){color = vec4(1.0, 0.0, 0.0, 1.0);}");
-	if (shader == 0)
+	if(shader == 0)
 		exit(EXIT_FAILURE);
 	return shader;
 }
@@ -58,13 +64,13 @@ int main(int argc, char* argv[]) {
 	////////////////////////////////////////
 
 	//Initialize SDL2
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		ERROR("The initialization of the SDL failed : %s\n", SDL_GetError());
 		return 0;
 	}
 
 	//init SDL_image
-	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+	if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
 		ERROR("Could not load SDL_image.\n");
 		return EXIT_FAILURE;
 	}
@@ -138,6 +144,7 @@ int main(int argc, char* argv[]) {
 
 		IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
 
+		// TODO included in camera
 		glm::mat4 proj = glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -1.0f, 1.0f);
 		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
@@ -167,16 +174,16 @@ int main(int argc, char* argv[]) {
 
 		bool isOpened = true;
 		//Main application loop
-		while (isOpened) {
+		while(isOpened) {
 			//Time in ms telling us when this frame started. Useful for keeping a fix framerate
 			uint32_t timeBegin = SDL_GetTicks();
 
 			//Fetch the SDL events
 			SDL_Event event;
-			while (SDL_PollEvent(&event)) {
-				switch (event.type) {
+			while(SDL_PollEvent(&event)) {
+				switch(event.type) {
 				case SDL_WINDOWEVENT:
-					switch (event.window.event) {
+					switch(event.window.event) {
 					case SDL_WINDOWEVENT_CLOSE:
 						isOpened = false;
 						break;
@@ -213,9 +220,9 @@ int main(int argc, char* argv[]) {
 			}
 
 
-			if (r > 1.0f)
+			if(r > 1.0f)
 				increment = -0.05f;
-			else if (r < 0.0f)
+			else if(r < 0.0f)
 				increment = 0.05f;
 
 			r += increment;
@@ -228,14 +235,14 @@ int main(int argc, char* argv[]) {
 			uint32_t timeEnd = SDL_GetTicks();
 
 			//We want FRAMERATE FPS
-			if (timeEnd - timeBegin < TIME_PER_FRAME_MS)
+			if(timeEnd - timeBegin < TIME_PER_FRAME_MS)
 				SDL_Delay(TIME_PER_FRAME_MS - (timeEnd - timeBegin));
 		}
 	} // inner scope to call all destructors before SDL_GL_DeleteContext
 	//Free everything
-	if (context != NULL)
+	if(context != NULL)
 		SDL_GL_DeleteContext(context);
-	if (window != NULL)
+	if(window != NULL)
 		SDL_DestroyWindow(window);
 
 	return 0;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 #include <iostream>
-#include "renderer.h"
+#include "rendering/renderer.h"
 
 void GLClearError() {
 	while (glGetError() != GL_NO_ERROR);

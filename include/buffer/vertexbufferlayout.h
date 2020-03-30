@@ -20,7 +20,7 @@
 #include <vector>
 #include <GL/glew.h>
 
-#include "renderer.h"
+#include "rendering/renderer.h"
 
 struct VertexBufferElement{
 	unsigned int type;

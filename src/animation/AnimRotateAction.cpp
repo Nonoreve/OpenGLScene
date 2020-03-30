@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-#include "buffer/complexvertexbuffer.h"
-#include <iostream>
-#include "rendering/renderer.h"
+#include "animation/AnimRotateAction.h"
 
-ComplexVertexBuffer::ComplexVertexBuffer(unsigned int size, unsigned int elements, int count, ...) : VertexBuffer(NULL, size, elements) {
-	va_list args;
-	unsigned int offset = 0;
-	va_start(args, count);
-	for (int i = 0; i < count; i++) {
-		SubData bufData = va_arg(args, SubData);
-		GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, bufData.size, bufData.data));
-		offset += bufData.size;
-	}
-	va_end(args);
+#include <cmath>
+#include <glm/gtc/matrix_transform.hpp>
+
+#define TO_RADIANS(x) (float)(x * (M_PI / 180)) // TODO remove
+
+void AnimRotateAction::Action(glm::mat4& mat) {
+	mat = glm::rotate(mat, glm::radians(m_RotAngle), m_Position);
 }
