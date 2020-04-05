@@ -118,7 +118,7 @@ int Shader::getFragID() const {
 void Shader::bindAttributes(unsigned int count, ...) {
 	va_list args;
 	va_start(args, count);
-	for (int i = 0; i < count; i++) {
+	for (unsigned int i = 0; i < count; i++) {
 		const char* name = va_arg(args, const char*);
 		GLCall(glBindAttribLocation(m_programID, i, name));
 	}
@@ -144,16 +144,28 @@ int Shader::GetUniformLocation(const std::string& name) {
 	return location;
 }
 
-void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
-	GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+void Shader::SetUniform1i(const std::string& name, int value) {
+	GLCall(glUniform1i(GetUniformLocation(name), value));
 }
 
 void Shader::SetUniform1f(const std::string& name, float value) {
 	GLCall(glUniform1f(GetUniformLocation(name), value));
 }
 
-void Shader::SetUniform1i(const std::string& name, int value) {
-	GLCall(glUniform1i(GetUniformLocation(name), value));
+void Shader::SetUniform3f(const std::string& name, float v0, float v1, float v2) {
+	GLCall(glUniform3f(GetUniformLocation(name), v0, v1, v2));
+}
+
+void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3) {
+	GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
+}
+
+void Shader::SetUniformVec3f(const std::string& name, glm::vec3 vector) {
+	GLCall(glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(vector)));
+}
+
+void Shader::SetUniformVec4f(const std::string& name, glm::vec4 vector) {
+	GLCall(glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(vector)));
 }
 
 void Shader::SetUniformMat4f(const std::string& name, const glm::mat4& matrix){

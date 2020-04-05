@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 #include <glm/detail/type_mat.hpp>
+#include <glm/detail/type_vec.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <unordered_map>
@@ -38,9 +39,12 @@ class Shader {
 		void Bind() const;
 		void Unbind() const;
 
-		void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
-		void SetUniform1f(const std::string& name, float value);
 		void SetUniform1i(const std::string& name, int value);
+		void SetUniform1f(const std::string& name, float value);
+		void SetUniform3f(const std::string& name, float v0, float v1, float v2);
+		void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
+		void SetUniformVec3f(const std::string& name, glm::vec3 vector);
+		void SetUniformVec4f(const std::string& name, glm::vec4 vector);
 		void SetUniformMat4f(const std::string& name, const glm::mat4& matrix);
 
 		/** \brief create a shader from a vertex and a fragment file.

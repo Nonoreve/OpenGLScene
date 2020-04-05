@@ -20,33 +20,36 @@
 #include <vector>
 #include <stack>
 
-#include "geometry/Geometry.h"
-#include "material.h"
 #include "animation/Animation.h"
+#include "geometry/Geometry.h"
+#include "rendering/Camera.h"
+#include "material.h"
 #include "Shader.h"
+#include "texture.h"
+#include "vertexarray.h"
 
 
 class RenderedObject {
 	private:
-		RenderedObject* m_Parent;
+		VertexArray* m_VertexArray;
 		Geometry* m_Geometry;
-		Shader* m_Shader; // not implemented
-		glm::mat4 m_TempMatrix; // TODO remove if possible
-		Material* m_Material;
-		unsigned int m_CurrentBuffer;// TODO remove if possible
+		Material* m_Material; // TODO transfer texture to material
+		Texture* m_Texture;
+		glm::mat4 m_Transform;
+		bool m_Visible;
+		RenderedObject* m_Parent; // TODO think children is enough
+		Shader* m_Shader; // TODO why bind shader to the object ?
 		std::vector<RenderedObject*> m_Children;
 		std::vector<Animation*> m_AnimChilds;
-		bool m_Visible;
-		unsigned int m_TextureID;// TODO remove if possible
 
-		void CreerBuffer(const char* imgName);
+		void CreerBuffer(const char* imgName);// TODO remove ONLY KEEP isVisible = true;
 
 	public:
-		inline RenderedObject() : m_TempMatrix(glm::mat4(1.0f)), m_Visible(false) {};
+		inline RenderedObject() : m_Transform(glm::mat4(1.0f)), m_Visible(false) {};
 		RenderedObject(RenderedObject& parent); // TODO expecting undefined behavior due to copy constructor overriding
-		RenderedObject(RenderedObject& parent, Shader* shader, const char* imgName, Material* material, Geometry* geometry);
+		RenderedObject(VertexArray& vertexArray, Geometry* geometry, Material& material, Texture& texture, RenderedObject& parent, Shader* shader);
 
-		void UpdateAnimations(float currentTime);
+		void UpdateAnimations(float currentTime); // TODO transfer work to animation class
 		inline void AddChild(RenderedObject* obj) {
 			m_Children.push_back(obj); // TODO incredibly messy
 		}
@@ -60,10 +63,10 @@ class RenderedObject {
 		void SetScale(glm::vec3 position);
 		void Rotate(float angle, glm::vec3 position);
 		void SetParent(RenderedObject& obj);
-		void ChangeGeometry(Geometry* geometry);
-		void AfficherRecursif(std::stack<glm::mat4>& matrices, float currentTime);
+		void ChangeGeometry(Geometry* geometry); // TODO remove ???
+		void AfficherRecursif(std::stack<glm::mat4>& matrices, float currentTime, Camera camera);
 		void CleanBufferRecursif();
-		void Afficher(std::stack<glm::mat4>& matrices);
+		void Afficher(std::stack<glm::mat4>& matrices, Camera camera);
 
 };
 

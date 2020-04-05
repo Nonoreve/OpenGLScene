@@ -22,6 +22,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "animation/Animation.h"
+#include "rendering/renderer.h"
+#include "texture.h"
 
 class Camera {
 	private:
@@ -39,25 +41,40 @@ class Camera {
 		glm::mat4 m_View;
 
 	public:
+		// TODO add some kind of inheritance with camera and RenderedObject (SceneObject ?)
 		// TODO adapt values
 		inline Camera() :
 			m_Speed(0.5f),
 			m_Front(glm::vec3(0.0f, 0.0f, -1.0f)),
 			m_Up(glm::vec3(0.0f, 1.0f, 0.0f)),
-			m_Position(glm::vec3(0.0f, 0.0f, 3.0f)),
+			m_Position(glm::vec3(0.0f, 0.0f, 0.0f)),
 			m_Width(1024.0f),
 			m_Height(768.0f),
 			m_Fov(120.0f),
-			m_Projection(glm::perspective(glm::radians(70.0f), (float)m_Width / (float)m_Height, 0.1f, 100.0f)),
+			m_Projection(glm::perspective(glm::radians(70.0f), (float)(WIDTH) / (float)(HEIGHT), 0.01f, 1000.0f)),
+			//m_Projection(glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -100.0f, 100.0f)),
 			// Head is up (set to 0,-1,0 to look upside-down)
-			m_View(glm::lookAt(m_Position, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))) {}
+			//m_View(glm::lookAt(m_Position, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))) {}
+			m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))) {}
 
 		void UpdateView();
 		void UpdateAnimations(float currentTime);
-		inline void AddChild(Animation* obj){m_AnimChilds.push_back(obj);}
-		inline void AddAnimation(Animation* anim){AddChild(anim);} // TODO messy need further refactoring
+		inline void AddChild(Animation* obj) {
+			m_AnimChilds.push_back(obj);
+		}
+		inline void AddAnimation(Animation* anim) {
+			AddChild(anim);   // TODO messy need further refactoring
+		}
 		void Rotate(float angle, glm::vec3 position);
-
+		inline glm::mat4 getProjectionM() {
+			return m_Projection;
+		}
+		inline glm::mat4 getViewM() {
+			return m_View;
+		}
+		inline glm::vec3 getPosition() {
+			return m_Position;
+		}
 };
 
 #endif // CAMERA_H
