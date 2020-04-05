@@ -28,6 +28,9 @@ struct lightComponents {
     lightComponents ( float initAmbient, float initDiffuse, float initSpecular, float initAlpha ) : ambient ( initAmbient ), diffuse ( initDiffuse ), specular ( initSpecular ), alpha ( initAlpha ) {}
     lightComponents() : ambient ( 0.5f ), diffuse ( 0.5f ), specular ( 0.5f ), alpha ( 500.0f ) {}
 
+    glm::vec4 asVector(){
+		return glm::vec4(ambient, diffuse, specular, alpha);
+	}
 };
 
 class Material {
@@ -38,6 +41,12 @@ class Material {
     public:
     inline Material() : m_Light(), m_Color ( glm::vec3 ( 1.0f, 1.0f, 1.0f ) ){};
     inline Material ( glm::vec3 color, glm::vec4 lightComponents ) : m_Light ( {lightComponents.x, lightComponents.y, lightComponents.z, lightComponents.w} ), m_Color ( color ){};
+	inline glm::vec4 getComponents(){
+		return m_Light.asVector();
+	}
+	inline glm::vec3 getColor(){
+		return m_Color;
+	}
 };
 
 #endif // MATERIAL_H

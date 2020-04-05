@@ -39,6 +39,7 @@ class Camera {
 		glm::mat4 m_View;
 
 	public:
+		// TODO add some kind of inheritance with camera and RenderedObject (SceneObject ?)
 		// TODO adapt values
 		inline Camera() :
 			m_Speed(0.5f),
@@ -54,10 +55,22 @@ class Camera {
 
 		void UpdateView();
 		void UpdateAnimations(float currentTime);
-		inline void AddChild(Animation* obj){m_AnimChilds.push_back(obj);}
-		inline void AddAnimation(Animation* anim){AddChild(anim);} // TODO messy need further refactoring
+		inline void AddChild(Animation* obj) {
+			m_AnimChilds.push_back(obj);
+		}
+		inline void AddAnimation(Animation* anim) {
+			AddChild(anim);   // TODO messy need further refactoring
+		}
 		void Rotate(float angle, glm::vec3 position);
-
+		inline glm::mat4 getProjectionM() {
+			return m_Projection;
+		}
+		inline glm::mat4 getViewM() {
+			return m_View;
+		}
+		inline glm::vec3 getPosition() {
+			return m_Position;
+		}
 };
 
 #endif // CAMERA_H

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stack>
 
 //SDL Libraries
 #include <SDL2/SDL.h>
@@ -21,6 +22,8 @@
 #include "buffer/complexvertexbuffer.h"
 #include "buffer/indexbuffer.h"
 #include "buffer/vertexbufferlayout.h"
+
+#include "geometry/Cube.h"
 
 #include "rendering/Camera.h"
 #include "rendering/renderer.h"
@@ -108,7 +111,7 @@ int main(int argc, char* argv[]) {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCall(glEnable(GL_BLEND));
 
-		const unsigned int VERTICES = 4;
+		/*const unsigned int VERTICES = 4;
 		const unsigned int TRIANGLES = 2;
 		const unsigned int POS_DIM = _2D; // either 2D or 3D
 		const unsigned int BUF_COMPONENTS = 2; // number of arrays
@@ -146,10 +149,14 @@ int main(int argc, char* argv[]) {
 
 		// TODO included in camera
 		glm::mat4 proj = glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -1.0f, 1.0f);
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));*/
 
-		auto shader = setupShaders("Shaders/color.vert", "Shaders/color.frag");
-		shader->bindAttributes(2, "vPosition", "vTexCoord");
+		auto shader = setupShaders("Shaders/Tex.vert", "Shaders/Tex.frag");
+		shader->bindAttributes(2, "v_Position", "v_UV");
+		
+		auto lightShader = setupShaders("Shaders/lightTex.vert", "Shaders/lightTex.frag");
+		lightShader->bindAttributes(3, "v_Position", "v_UV", "v_Normal");
+		
 		shader->Bind();
 		// TODO color * texture in shader
 		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
@@ -157,9 +164,9 @@ int main(int argc, char* argv[]) {
 		// TODO make portable
 		Texture texture(RESOURCE_FILE("NonoreveLogo.png"));
 		texture.Bind();
-		shader->SetUniform1i("u_Texture", 0);
+		//shader->SetUniform1i("u_Texture", 0);
 
-		glm::vec3 translationA(420, 69, 0);
+		/*glm::vec3 translationA(420, 69, 0);
 		glm::vec3 translationB(69, 420, 0);
 
 		float r = 0.0f;
@@ -169,7 +176,32 @@ int main(int argc, char* argv[]) {
 		vb.Unbind();
 		ib.Unbind();
 
-		Renderer renderer;
+		Renderer renderer;*/
+		
+		glm::vec3 matColor(1.0f, 1.0f, 1.0f);
+		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
+		
+		Material defaultMat(matColor, propert);
+		
+		VertexArray va;
+		RenderedObject root;
+		Geometry* cube = new Cube();
+		const unsigned int vertices = cube->getNbVertices();
+		
+		SubData posData = {vertices * 3 * static_cast<unsigned int>(sizeof(float)), cube->getVertices()};
+		SubData normalsData = {vertices * 3 * sizeof(float), cube->getNormals()};
+		SubData texData = {vertices * 2 * sizeof(float), cube->getUVs()};
+		ComplexVertexBuffer vb(vertices * (3 + 3 + 2) * sizeof(float), vertices, 3, posData, normalsData, texData);
+		
+		VertexBufferLayout layout;
+		layout.Push<float>(3);
+		layout.Push<float>(3);
+		layout.Push<float>(TEX_CHANNELS);
+		va.addBuffer(vb, layout);
+		RenderedObject box(cube, &defaultMat, root, shader);
+		
+		std::stack<glm::mat4> matrices;
+		float currentTime = 0.0f;
 
 
 		bool isOpened = true;
@@ -196,9 +228,7 @@ int main(int argc, char* argv[]) {
 			}
 
 
-			renderer.Clear();
-
-
+			/*renderer.Clear();
 
 			shader->Bind();
 			{
@@ -219,13 +249,20 @@ int main(int argc, char* argv[]) {
 				renderer.Draw(va, ib, Shader(*shader));
 			}
 
-
 			if(r > 1.0f)
 				increment = -0.05f;
 			else if(r < 0.0f)
 				increment = 0.05f;
 
-			r += increment;
+			r += increment;*/
+			
+			
+			//const unsigned int TEXTURE_SLOT = 0;
+			//m_Texture.Bind(TEXTURE_SLOT);
+			GLCall(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
+			va.Bind();
+			currentTime += TIME_PER_FRAME_MS;
+			root.AfficherRecursif(matrices, currentTime);
 
 
 			//Display on screen (swap the buffer on screen and the buffer you are drawing on)
