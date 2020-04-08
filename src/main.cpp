@@ -12,6 +12,8 @@
 
 //GML libraries
 #include <glm/glm.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -111,7 +113,7 @@ int main(int argc, char* argv[]) {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCall(glEnable(GL_BLEND));
 
-		/*const unsigned int VERTICES = 4;
+		const unsigned int VERTICES = 4;
 		const unsigned int TRIANGLES = 2;
 		const unsigned int POS_DIM = _2D; // either 2D or 3D
 		const unsigned int BUF_COMPONENTS = 2; // number of arrays
@@ -149,7 +151,7 @@ int main(int argc, char* argv[]) {
 
 		// TODO included in camera
 		glm::mat4 proj = glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -1.0f, 1.0f);
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));*/
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
 		auto shader = setupShaders("Shaders/Tex.vert", "Shaders/Tex.frag");
 		shader->bindAttributes(2, "v_Position", "v_UV");
@@ -166,19 +168,16 @@ int main(int argc, char* argv[]) {
 		texture.Bind();
 		//shader->SetUniform1i("u_Texture", 0);
 
-		/*glm::vec3 translationA(420, 69, 0);
+		glm::vec3 translationA(420, 69, 0);
 		glm::vec3 translationB(69, 420, 0);
-
-		float r = 0.0f;
-		float increment = 0.05f;
 
 		shader->Unbind();
 		vb.Unbind();
 		ib.Unbind();
 
-		Renderer renderer;*/
+		Renderer renderer;
 		
-		glm::vec3 matColor(1.0f, 1.0f, 1.0f);
+		/*glm::vec3 matColor(1.0f, 1.0f, 1.0f);
 		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
 		
 		Material defaultMat(matColor, propert);
@@ -187,21 +186,24 @@ int main(int argc, char* argv[]) {
 		RenderedObject root;
 		Geometry* cube = new Cube();
 		const unsigned int vertices = cube->getNbVertices();
+		const unsigned int sizeOfFloat = static_cast<unsigned int>(sizeof(float));
 		
-		SubData posData = {vertices * 3 * static_cast<unsigned int>(sizeof(float)), cube->getVertices()};
-		SubData normalsData = {vertices * 3 * sizeof(float), cube->getNormals()};
-		SubData texData = {vertices * 2 * sizeof(float), cube->getUVs()};
-		ComplexVertexBuffer vb(vertices * (3 + 3 + 2) * sizeof(float), vertices, 3, posData, normalsData, texData);
+		SubData posData = {vertices * _3D * sizeOfFloat, cube->getVertices()};
+		SubData normalsData = {vertices * _3D * sizeOfFloat, cube->getNormals()};
+		SubData texData = {vertices * TEX_CHANNELS * sizeOfFloat, cube->getUVs()};
+		ComplexVertexBuffer vb(vertices * (_3D + _3D + TEX_CHANNELS) * sizeof(float), vertices, 3, posData, normalsData, texData);
 		
 		VertexBufferLayout layout;
-		layout.Push<float>(3);
-		layout.Push<float>(3);
+		layout.Push<float>(_3D);
+		layout.Push<float>(_3D);
 		layout.Push<float>(TEX_CHANNELS);
 		va.addBuffer(vb, layout);
 		RenderedObject box(cube, &defaultMat, root, shader);
 		
 		std::stack<glm::mat4> matrices;
+		matrices.push(glm::mat4(1.0f));
 		float currentTime = 0.0f;
+		Camera camera;*/
 
 
 		bool isOpened = true;
@@ -228,7 +230,7 @@ int main(int argc, char* argv[]) {
 			}
 
 
-			/*renderer.Clear();
+			renderer.Clear();
 
 			shader->Bind();
 			{
@@ -248,21 +250,15 @@ int main(int argc, char* argv[]) {
 
 				renderer.Draw(va, ib, Shader(*shader));
 			}
-
-			if(r > 1.0f)
-				increment = -0.05f;
-			else if(r < 0.0f)
-				increment = 0.05f;
-
-			r += increment;*/
 			
 			
 			//const unsigned int TEXTURE_SLOT = 0;
 			//m_Texture.Bind(TEXTURE_SLOT);
-			GLCall(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
-			va.Bind();
-			currentTime += TIME_PER_FRAME_MS;
-			root.AfficherRecursif(matrices, currentTime);
+// 			GLCall(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
+// 			va.Bind();
+// 			shader->Bind();
+// 			currentTime += TIME_PER_FRAME_MS;
+// 			box.Afficher(matrices, camera);
 
 
 			//Display on screen (swap the buffer on screen and the buffer you are drawing on)

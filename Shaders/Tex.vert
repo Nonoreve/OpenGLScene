@@ -10,6 +10,7 @@ out vec2 uv;
 
 void main() {
     uv = v_UV;
-	gl_Position = u_MVP * vec4(v_Position , 1.0); // Hence x and y go from -w to w hence -1 to +1. Premultiply this variable if you want to transform the position.
+	// Hence x and y go from -w to w hence -1 to +1. Premultiply this variable if you want to transform the position.
+	gl_Position = vec4(1.0);//u_MVP * vec4(v_Position , 1.0);
 }
 

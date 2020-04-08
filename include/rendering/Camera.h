@@ -45,7 +45,7 @@ class Camera {
 			m_Speed(0.5f),
 			m_Front(glm::vec3(0.0f, 0.0f, -1.0f)),
 			m_Up(glm::vec3(0.0f, 1.0f, 0.0f)),
-			m_Position(glm::vec3(0.0f, 0.0f, 3.0f)),
+			m_Position(glm::vec3(0.0f, 0.0f, 0.0f)),
 			m_Width(1024.0f),
 			m_Height(768.0f),
 			m_Fov(120.0f),
