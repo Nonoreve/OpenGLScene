@@ -26,7 +26,7 @@ RenderedObject::RenderedObject(RenderedObject& parent) : m_Transform(glm::mat4(1
 	parent.AddChild(this);
 }
 
-RenderedObject::RenderedObject(Geometry* geometry, Material* material, RenderedObject& parent, Shader* shader) : m_Geometry(geometry), m_Material(material), m_Transform(glm::mat4(1.0f)), m_Visible(true),  m_Parent(&parent), m_Shader(shader) {
+RenderedObject::RenderedObject(VertexArray& vertexArray, Geometry* geometry, Material& material, Texture& texture, RenderedObject& parent, Shader* shader) : m_VertexArray(&vertexArray), m_Geometry(geometry), m_Material(&material), m_Texture(&texture), m_Transform(glm::mat4(1.0f)), m_Visible(true),  m_Parent(&parent), m_Shader(shader) {
 	parent.AddChild(this);
 }
 
@@ -109,6 +109,9 @@ void RenderedObject::Afficher(std::stack<glm::mat4>& matrices, Camera camera) {
 	glm::mat4 modelView = camera.getViewM() * matrices.top();
 	glm::mat4 mvp = camera.getProjectionM() * camera.getViewM() * matrices.top();
 
+	m_VertexArray->Bind();
+	m_Texture->Bind();
+	m_Shader->Bind();
 	m_Shader->SetUniformMat4f("u_MVP", mvp);
 	m_Shader->SetUniformMat4f("u_ModelView", modelView);
 	m_Shader->SetUniform1i("u_Texture", 0); // TEXTURE_SLOT

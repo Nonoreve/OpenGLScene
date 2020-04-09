@@ -22,6 +22,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "animation/Animation.h"
+#include "rendering/renderer.h"
+#include "texture.h"
 
 class Camera {
 	private:
@@ -49,9 +51,11 @@ class Camera {
 			m_Width(1024.0f),
 			m_Height(768.0f),
 			m_Fov(120.0f),
-			m_Projection(glm::perspective(glm::radians(70.0f), (float)m_Width / (float)m_Height, 0.1f, 100.0f)),
+			m_Projection(glm::perspective(glm::radians(70.0f), (float)(WIDTH) / (float)(HEIGHT), 0.01f, 1000.0f)),
+			//m_Projection(glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -100.0f, 100.0f)),
 			// Head is up (set to 0,-1,0 to look upside-down)
-			m_View(glm::lookAt(m_Position, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))) {}
+			//m_View(glm::lookAt(m_Position, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))) {}
+			m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))) {}
 
 		void UpdateView();
 		void UpdateAnimations(float currentTime);

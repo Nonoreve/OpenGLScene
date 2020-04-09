@@ -26,6 +26,7 @@
 #include "buffer/vertexbufferlayout.h"
 
 #include "geometry/Cube.h"
+#include "geometry/Square.h"
 
 #include "rendering/Camera.h"
 #include "rendering/renderer.h"
@@ -113,98 +114,96 @@ int main(int argc, char* argv[]) {
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 		GLCall(glEnable(GL_BLEND));
 
-		const unsigned int VERTICES = 4;
+		Renderer renderer;
+		RenderedObject root;
+		Camera camera;
+
+		glm::vec3 matColor(1.0f, 1.0f, 1.0f);
+		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
+		Material defaultMat(matColor, propert);
+
+		Shader* defaultShader = setupShaders("Shaders/Tex.vert", "Shaders/Tex.frag");
+		defaultShader->bindAttributes(2, "v_Position", "v_UV");
+
+		auto lightShader = setupShaders("Shaders/lightTex.vert", "Shaders/lightTex.frag");
+		lightShader->bindAttributes(3, "v_Position", "v_UV", "v_Normal");
+
+		defaultShader->Bind();
+		// TODO color * texture in shader
+		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
+
+		// TODO make portable
+		Texture texture(RESOURCE_FILE("img/NonoreveLogo.png"));
+		Texture cubeTexture(RESOURCE_FILE("img/grass.png"));
+		//shader->SetUniform1i("u_Texture", 0);
+
+
+// 		const unsigned int VERTICES = 4;
 		const unsigned int TRIANGLES = 2;
 		const unsigned int POS_DIM = _2D; // either 2D or 3D
-		const unsigned int BUF_COMPONENTS = 2; // number of arrays
+		const unsigned int BUF_COMPONENTS = 3; // number of arrays
+		const unsigned int sizeOfFloat = static_cast<unsigned int>(sizeof(float));
 
-		float positions[] = {
-			-50.0f, -50.0f,
-			50.0f, -50.0f,
-			50.0f,  50.0f,
-			-50.0f,  50.0f
-		};
-
-		float texturesPositions[] = {
-			0.0f, 0.0f,
-			1.0f, 0.0f,
-			1.0f, 1.0f,
-			0.0f, 1.0f
-		};
-
+		// TODO include in geometry
 		unsigned int indices[] = {
 			0, 1, 2,
 			2, 3, 0
 		};
 
-		VertexArray va;
-		SubData posData = {VERTICES* POS_DIM * sizeof(float), positions};
-		SubData texData = {VERTICES* POS_DIM * sizeof(float), texturesPositions};
-		ComplexVertexBuffer vb(VERTICES * (POS_DIM + TEX_CHANNELS) * sizeof(float), VERTICES, BUF_COMPONENTS, posData, texData);
+		VertexArray squareVA;
+		Geometry* square = new Square();
+		SubData squarePosData = {square->getNbVertices()* POS_DIM * sizeOfFloat, square->getVertices()};
+		SubData squareTexData = {square->getNbVertices()* TEX_CHANNELS * sizeOfFloat, square->getUVs()};
+		SubData squareNormData = {square->getNbVertices() * 3 * sizeOfFloat, square->getNormals()};
+		ComplexVertexBuffer squareVB(square->getNbVertices() * (POS_DIM + TEX_CHANNELS + 3) * sizeof(float), square->getNbVertices(), BUF_COMPONENTS, squarePosData, squareTexData, squareNormData);
 
-		VertexBufferLayout layout;
-		layout.Push<float>(POS_DIM);
-		layout.Push<float>(TEX_CHANNELS);
-		va.addBuffer(vb, layout);
+		VertexBufferLayout squareLayout;
+		squareLayout.Push<float>(POS_DIM);
+		squareLayout.Push<float>(TEX_CHANNELS);
+		squareLayout.Push<float>(3);
+		squareVA.addBuffer(squareVB, squareLayout);
 
-		IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
+		RenderedObject texSquare(squareVA, square, defaultMat, texture, root, defaultShader);
+
+		//IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
 
 		// TODO included in camera
-		glm::mat4 proj = glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -1.0f, 1.0f);
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+		//glm::mat4 proj = glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -1.0f, 1.0f);
+		//glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
-		auto shader = setupShaders("Shaders/Tex.vert", "Shaders/Tex.frag");
-		shader->bindAttributes(2, "v_Position", "v_UV");
-		
-		auto lightShader = setupShaders("Shaders/lightTex.vert", "Shaders/lightTex.frag");
-		lightShader->bindAttributes(3, "v_Position", "v_UV", "v_Normal");
-		
-		shader->Bind();
-		// TODO color * texture in shader
-		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
 
-		// TODO make portable
-		Texture texture(RESOURCE_FILE("NonoreveLogo.png"));
-		texture.Bind();
-		//shader->SetUniform1i("u_Texture", 0);
 
-		glm::vec3 translationA(420, 69, 0);
-		glm::vec3 translationB(69, 420, 0);
+		squareVB.Unbind();
+		//ib.Unbind();
 
-		shader->Unbind();
-		vb.Unbind();
-		ib.Unbind();
-
-		Renderer renderer;
-		
-		/*glm::vec3 matColor(1.0f, 1.0f, 1.0f);
-		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
-		
-		Material defaultMat(matColor, propert);
-		
-		VertexArray va;
-		RenderedObject root;
+		VertexArray cubeVA;
 		Geometry* cube = new Cube();
 		const unsigned int vertices = cube->getNbVertices();
-		const unsigned int sizeOfFloat = static_cast<unsigned int>(sizeof(float));
-		
-		SubData posData = {vertices * _3D * sizeOfFloat, cube->getVertices()};
-		SubData normalsData = {vertices * _3D * sizeOfFloat, cube->getNormals()};
-		SubData texData = {vertices * TEX_CHANNELS * sizeOfFloat, cube->getUVs()};
-		ComplexVertexBuffer vb(vertices * (_3D + _3D + TEX_CHANNELS) * sizeof(float), vertices, 3, posData, normalsData, texData);
-		
-		VertexBufferLayout layout;
-		layout.Push<float>(_3D);
-		layout.Push<float>(_3D);
-		layout.Push<float>(TEX_CHANNELS);
-		va.addBuffer(vb, layout);
-		RenderedObject box(cube, &defaultMat, root, shader);
-		
-		std::stack<glm::mat4> matrices;
-		matrices.push(glm::mat4(1.0f));
-		float currentTime = 0.0f;
-		Camera camera;*/
 
+		SubData posData = {vertices* _3D * sizeOfFloat, cube->getVertices()};
+		SubData texData = {vertices* TEX_CHANNELS * sizeOfFloat, cube->getUVs()};
+		SubData normalsData = {vertices* _3D * sizeOfFloat, cube->getNormals()};
+		ComplexVertexBuffer cubeVB(vertices * (_3D + _3D + TEX_CHANNELS) * sizeof(float), vertices, 3, posData, texData, normalsData);
+
+		VertexBufferLayout cubeLayout;
+		cubeLayout.Push<float>(_3D);
+		cubeLayout.Push<float>(TEX_CHANNELS);
+		cubeLayout.Push<float>(_3D);
+		cubeVA.addBuffer(cubeVB, cubeLayout);
+		RenderedObject box(cubeVA, cube, defaultMat, cubeTexture, root, defaultShader);
+		cubeVB.Unbind();
+
+		defaultShader->Unbind();
+		std::stack<glm::mat4> matrices;
+		float currentTime = 0.0f;
+
+		glm::vec3 scaling(5, 5, 5);
+		glm::vec3 translationA(5, -5, -10);
+		texSquare.Move(translationA);
+		texSquare.SetScale(scaling);
+		glm::vec3 translationB(-5, 5, -10);
+		box.Move(translationB);
+		box.SetScale(scaling);
 
 		bool isOpened = true;
 		//Main application loop
@@ -231,34 +230,28 @@ int main(int argc, char* argv[]) {
 
 
 			renderer.Clear();
+			currentTime += TIME_PER_FRAME_MS;
+			root.AfficherRecursif(matrices, currentTime, camera);
 
-			shader->Bind();
-			{
-				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
-				glm::mat4 mvp = proj * view * model;
-				//shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-				shader->SetUniformMat4f("u_MVP", mvp);
-
-				renderer.Draw(va, ib, Shader(*shader));
-			}
-
-			{
-				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
-				glm::mat4 mvp = proj * view * model;
-				//shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
-				shader->SetUniformMat4f("u_MVP", mvp);
-
-				renderer.Draw(va, ib, Shader(*shader));
-			}
-			
-			
-			//const unsigned int TEXTURE_SLOT = 0;
-			//m_Texture.Bind(TEXTURE_SLOT);
-// 			GLCall(glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT));
-// 			va.Bind();
-// 			shader->Bind();
-// 			currentTime += TIME_PER_FRAME_MS;
+// 			squareVA.Bind();
+// 			texture.Bind();
+// 			matrices.push(glm::scale(glm::translate(glm::mat4(1.0f), translationA), scaling));
+// 			texSquare.Afficher(matrices, camera);
+//
+// 			cubeVA.Bind();
+// 			cubeTexture.Bind();
+// 			matrices.push(glm::scale(glm::translate(glm::mat4(1.0f), translationB), scaling));
 // 			box.Afficher(matrices, camera);
+
+			/*{
+				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+				glm::mat4 mvp = camera.getProjectionM() * camera.getViewM() * model;
+				//shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+				shader->SetUniformMat4f("u_MVP", mvp);
+
+				//renderer.Draw(va, ib, Shader(*shader));
+				glDrawArrays(GL_TRIANGLES, 0, square->getNbVertices());
+			}*/
 
 
 			//Display on screen (swap the buffer on screen and the buffer you are drawing on)

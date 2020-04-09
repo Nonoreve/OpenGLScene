@@ -22,7 +22,7 @@ Texture::Texture(const std::string& path) : m_FilePath(path), m_LocalBuffer(null
 	if (!img) {
 		std::cerr << "[SDL_image Error] Can't read file '" << path << "'." << std::endl;
 	}
-	m_LocalBuffer = SDL_ConvertSurfaceFormat(img, SDL_PIXELFORMAT_RGBA8888, 0);
+	m_LocalBuffer = SDL_ConvertSurfaceFormat(img, SDL_PIXELFORMAT_RGBA32, 0);
 	SDL_FreeSurface(img);
 	m_Width = m_LocalBuffer->w;
 	m_Height = m_LocalBuffer->h;

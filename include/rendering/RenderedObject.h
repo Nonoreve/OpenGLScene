@@ -25,13 +25,16 @@
 #include "rendering/Camera.h"
 #include "material.h"
 #include "Shader.h"
+#include "texture.h"
+#include "vertexarray.h"
 
 
 class RenderedObject {
 	private:
+		VertexArray* m_VertexArray;
 		Geometry* m_Geometry;
 		Material* m_Material; // TODO transfer texture to material
-		//Texture m_Texture;
+		Texture* m_Texture;
 		glm::mat4 m_Transform;
 		bool m_Visible;
 		RenderedObject* m_Parent; // TODO think children is enough
@@ -44,7 +47,7 @@ class RenderedObject {
 	public:
 		inline RenderedObject() : m_Transform(glm::mat4(1.0f)), m_Visible(false) {};
 		RenderedObject(RenderedObject& parent); // TODO expecting undefined behavior due to copy constructor overriding
-		RenderedObject(Geometry* geometry, Material* material, RenderedObject& parent, Shader* shader);
+		RenderedObject(VertexArray& vertexArray, Geometry* geometry, Material& material, Texture& texture, RenderedObject& parent, Shader* shader);
 
 		void UpdateAnimations(float currentTime); // TODO transfer work to animation class
 		inline void AddChild(RenderedObject* obj) {
