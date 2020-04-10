@@ -25,5 +25,5 @@ void main() {
     
     vec3 result = (ambient + diffuse + specular); // voir si le specular prend en compte la couleur
 
-    color = vec4(result,1.0) * texture2D(u_Texture, uv).abgr;
+    color = vec4(result,1.0) * texture2D(u_Texture, uv);
 }

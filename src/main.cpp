@@ -121,18 +121,20 @@ int main(int argc, char* argv[]) {
 		glm::vec3 matColor(1.0f, 1.0f, 1.0f);
 		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
 		Material defaultMat(matColor, propert);
+		
+		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+		glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
+		Light sun = Light(lightPos, lightColor);
 
-		Shader* defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag");
+		auto defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag");
 		defaultShader->bindAttributes(2, "v_Position", "v_UV");
 
 		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag");
 		lightShader->bindAttributes(3, "v_Position", "v_UV", "v_Normal");
 
-		defaultShader->Bind();
 		// TODO color * texture in shader
 		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
 
-		// TODO make portable
 		Texture texture("resources/img/NonoreveLogo.png");
 		Texture cubeTexture("resources/img/grass.png");
 		//shader->SetUniform1i("u_Texture", 0);
@@ -163,16 +165,15 @@ int main(int argc, char* argv[]) {
 		squareLayout.Push<float>(TEX_CHANNELS);
 		squareLayout.Push<float>(3);
 		squareVA.addBuffer(squareVB, squareLayout);
-
+		defaultShader->Bind();
 		RenderedObject texSquare(squareVA, square, defaultMat, texture, root, defaultShader);
-
-
 		squareVB.Unbind();
+		defaultShader->Unbind();
 
+		
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
 		const unsigned int vertices = cube->getNbVertices();
-
 		SubData posData = {vertices* _3D * sizeOfFloat, cube->getVertices()};
 		SubData texData = {vertices* TEX_CHANNELS * sizeOfFloat, cube->getUVs()};
 		SubData normalsData = {vertices* _3D * sizeOfFloat, cube->getNormals()};
@@ -183,10 +184,12 @@ int main(int argc, char* argv[]) {
 		cubeLayout.Push<float>(TEX_CHANNELS);
 		cubeLayout.Push<float>(_3D);
 		cubeVA.addBuffer(cubeVB, cubeLayout);
-		RenderedObject box(cubeVA, cube, defaultMat, cubeTexture, root, defaultShader);
+		lightShader->Bind();
+		RenderedObject box(cubeVA, cube, defaultMat, cubeTexture, root, lightShader);
 		cubeVB.Unbind();
+		lightShader->Unbind();
 
-		defaultShader->Unbind();
+		
 		std::stack<glm::mat4> matrices;
 		float currentTime = 0.0f;
 
@@ -224,7 +227,7 @@ int main(int argc, char* argv[]) {
 
 			renderer.Clear();
 			currentTime += TIME_PER_FRAME_MS;
-			root.AfficherRecursif(matrices, currentTime, camera);
+			root.AfficherRecursif(matrices, currentTime, camera, sun);
 
 			/*{
 				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);

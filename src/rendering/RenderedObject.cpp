@@ -15,7 +15,6 @@
  */
 
 #include "rendering/RenderedObject.h"
-#include "light.h"
 
 #include <algorithm>
 #include <iostream>
@@ -78,7 +77,8 @@ void RenderedObject::ChangeGeometry(Geometry* geometry) {
 	m_Geometry = geometry;
 }
 
-void RenderedObject::AfficherRecursif(std::stack<glm::mat4>& matrices, float currentTime, Camera camera) { // TODO refactoring needed
+void RenderedObject::AfficherRecursif(std::stack<glm::mat4>& matrices, float currentTime, Camera camera, Light sun) {
+	// TODO refactoring needed
 	UpdateAnimations(currentTime);
 	if(matrices.size() == 0)
 		matrices.push(m_Transform);
@@ -86,33 +86,22 @@ void RenderedObject::AfficherRecursif(std::stack<glm::mat4>& matrices, float cur
 		matrices.push(matrices.top() * m_Transform);
 
 	if(m_Visible)
-		Afficher(matrices, camera);
+		Afficher(matrices, camera, sun);
 
 	for(RenderedObject* tempObj : m_Children)
-		tempObj->AfficherRecursif(matrices, currentTime, camera);
+		tempObj->AfficherRecursif(matrices, currentTime, camera, sun);
 
 	matrices.pop();
 }
 
-void RenderedObject::CleanBufferRecursif() {
-	// TODO clash with my code (glDeleteBuffer)
-	for(RenderedObject* tempObj : m_Children)
-		tempObj->CleanBufferRecursif();
-}
-
-void RenderedObject::Afficher(std::stack<glm::mat4>& matrices, Camera camera) {
-	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-	glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
-
-	Light sun = Light(lightPos, lightColor);
+void RenderedObject::Afficher(std::stack<glm::mat4>& matrices, Camera camera, Light sun) {
 
 	glm::mat4 modelView = camera.getViewM() * matrices.top();
-	glm::mat4 mvp = camera.getProjectionM() * camera.getViewM() * matrices.top();
 
 	m_VertexArray->Bind();
 	m_Texture->Bind();
 	m_Shader->Bind();
-	m_Shader->SetUniformMat4f("u_MVP", mvp);
+	m_Shader->SetUniformMat4f("u_Projection", camera.getProjectionM());
 	m_Shader->SetUniformMat4f("u_ModelView", modelView);
 	m_Shader->SetUniform1i("u_Texture", 0); // TEXTURE_SLOT
 	m_Shader->SetUniformVec4f("u_K", m_Material->getComponents());

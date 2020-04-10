@@ -23,6 +23,7 @@
 #include "animation/Animation.h"
 #include "geometry/Geometry.h"
 #include "rendering/Camera.h"
+#include "light.h"
 #include "material.h"
 #include "Shader.h"
 #include "texture.h"
@@ -64,9 +65,8 @@ class RenderedObject {
 		void Rotate(float angle, glm::vec3 position);
 		void SetParent(RenderedObject& obj);
 		void ChangeGeometry(Geometry* geometry); // TODO remove ???
-		void AfficherRecursif(std::stack<glm::mat4>& matrices, float currentTime, Camera camera);
-		void CleanBufferRecursif();
-		void Afficher(std::stack<glm::mat4>& matrices, Camera camera);
+		void AfficherRecursif(std::stack<glm::mat4>& matrices, float currentTime, Camera camera, Light sun);
+		void Afficher(std::stack<glm::mat4>& matrices, Camera camera, Light sun);
 
 };
 

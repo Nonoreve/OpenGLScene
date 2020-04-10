@@ -161,7 +161,7 @@ void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2,
 }
 
 void Shader::SetUniformVec3f(const std::string& name, glm::vec3 vector) {
-	GLCall(glUniform4fv(GetUniformLocation(name), 1, glm::value_ptr(vector)));
+	GLCall(glUniform3fv(GetUniformLocation(name), 1, glm::value_ptr(vector)));
 }
 
 void Shader::SetUniformVec4f(const std::string& name, glm::vec4 vector) {
