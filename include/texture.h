@@ -20,8 +20,6 @@
 #include "rendering/renderer.h"
 #include <SDL2/SDL_image.h>
 
-#define __RESSOURCE_FILE "../resources/"
-#define RESOURCE_FILE(x) __RESSOURCE_FILE x
 
 class Texture {
 private:

@@ -122,10 +122,10 @@ int main(int argc, char* argv[]) {
 		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
 		Material defaultMat(matColor, propert);
 
-		Shader* defaultShader = setupShaders("Shaders/Tex.vert", "Shaders/Tex.frag");
+		Shader* defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag");
 		defaultShader->bindAttributes(2, "v_Position", "v_UV");
 
-		auto lightShader = setupShaders("Shaders/lightTex.vert", "Shaders/lightTex.frag");
+		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag");
 		lightShader->bindAttributes(3, "v_Position", "v_UV", "v_Normal");
 
 		defaultShader->Bind();
@@ -133,8 +133,8 @@ int main(int argc, char* argv[]) {
 		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
 
 		// TODO make portable
-		Texture texture(RESOURCE_FILE("img/NonoreveLogo.png"));
-		Texture cubeTexture(RESOURCE_FILE("img/grass.png"));
+		Texture texture("resources/img/NonoreveLogo.png");
+		Texture cubeTexture("resources/img/grass.png");
 		//shader->SetUniform1i("u_Texture", 0);
 
 
@@ -149,6 +149,7 @@ int main(int argc, char* argv[]) {
 			0, 1, 2,
 			2, 3, 0
 		};
+		//IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
 
 		VertexArray squareVA;
 		Geometry* square = new Square();
@@ -165,16 +166,8 @@ int main(int argc, char* argv[]) {
 
 		RenderedObject texSquare(squareVA, square, defaultMat, texture, root, defaultShader);
 
-		//IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
-
-		// TODO included in camera
-		//glm::mat4 proj = glm::ortho(0.0f, (float)(WIDTH), 0.0f, (float)(HEIGHT), -1.0f, 1.0f);
-		//glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-
-
 
 		squareVB.Unbind();
-		//ib.Unbind();
 
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
@@ -198,11 +191,11 @@ int main(int argc, char* argv[]) {
 		float currentTime = 0.0f;
 
 		glm::vec3 scaling(5, 5, 5);
-		glm::vec3 translationA(5, -5, -10);
-		texSquare.Move(translationA);
+
+		texSquare.Move(glm::vec3(5, -5, -10));
 		texSquare.SetScale(scaling);
-		glm::vec3 translationB(-5, 5, -10);
-		box.Move(translationB);
+
+		box.Move(glm::vec3(-5, 5, -10));
 		box.SetScale(scaling);
 
 		bool isOpened = true;
@@ -233,23 +226,13 @@ int main(int argc, char* argv[]) {
 			currentTime += TIME_PER_FRAME_MS;
 			root.AfficherRecursif(matrices, currentTime, camera);
 
-// 			squareVA.Bind();
-// 			texture.Bind();
-// 			matrices.push(glm::scale(glm::translate(glm::mat4(1.0f), translationA), scaling));
-// 			texSquare.Afficher(matrices, camera);
-//
-// 			cubeVA.Bind();
-// 			cubeTexture.Bind();
-// 			matrices.push(glm::scale(glm::translate(glm::mat4(1.0f), translationB), scaling));
-// 			box.Afficher(matrices, camera);
-
 			/*{
 				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
 				glm::mat4 mvp = camera.getProjectionM() * camera.getViewM() * model;
 				//shader->SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 				shader->SetUniformMat4f("u_MVP", mvp);
 
-				//renderer.Draw(va, ib, Shader(*shader));
+				renderer.Draw(va, ib, Shader(*shader));
 				glDrawArrays(GL_TRIANGLES, 0, square->getNbVertices());
 			}*/
 
