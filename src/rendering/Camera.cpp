@@ -16,6 +16,7 @@
 
 #include "rendering/Camera.h"
 #include "animation/Animation.h"
+#include <iostream>
 #include <algorithm>
 
 void Camera::UpdateView() {
@@ -41,4 +42,89 @@ void Camera::Rotate(float angle, glm::vec3 position) {
 		return; // TODO print error ?
 
 	m_View = glm::rotate(m_View, glm::radians(angle), position); // We rotate via an axis and an angle around this axis
+}
+
+// TODO move as field
+float yaw = -90.0f;
+float pitch = 0.0f;
+bool changingLook = false; // changing angles only if right cliking
+
+void Camera::inputMove(const SDL_Event& event) {
+	// TODO add velocity
+	int xPos = event.motion.x;
+	int yPos = event.motion.y;
+	switch(event.type) {
+	case SDL_KEYDOWN:
+		switch(event.key.keysym.sym) {
+		case SDLK_z:
+		case SDLK_UP:
+			m_Position += m_Speed * m_Front;
+			break;
+		case SDLK_s:
+		case SDLK_DOWN:
+			m_Position -= m_Speed * m_Front;
+			break;
+		case SDLK_q:
+		case SDLK_LEFT:
+			m_Position -= glm::normalize(glm::cross(m_Front, m_Up)) * m_Speed;
+			break;
+		case SDLK_d:
+		case SDLK_RIGHT:
+			m_Position += glm::normalize(glm::cross(m_Front, m_Up)) * m_Speed;
+			break;
+		default:
+			std::cout << "Unhandeld key pressed " << event.key.keysym.sym << std::endl;
+			break;
+		}
+		break;
+	case SDL_MOUSEBUTTONDOWN:
+		switch(event.button.button) {
+		case SDL_BUTTON_LEFT:
+			std::cout << "Left click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
+			break;
+		case SDL_BUTTON_MIDDLE:
+			std::cout << "Middle click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
+			break;
+		case SDL_BUTTON_RIGHT:
+			std::cout << "Right click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
+			changingLook = true;
+			break;
+		default:
+			std::cout << "Unhandeld mouse button pressed " << event.button.button << std::endl;
+			break;
+		}
+		break;
+	case SDL_MOUSEBUTTONUP:
+		switch(event.button.button) {
+		case SDL_BUTTON_LEFT:
+			break;
+		case SDL_BUTTON_MIDDLE:
+			break;
+		case SDL_BUTTON_RIGHT:
+			changingLook = false;
+			break;
+		default:
+			break;
+		}
+		break;
+	case SDL_MOUSEMOTION:
+		//std::cout << "Mouse moved to (" << event.motion.x << ", " << event.motion.y << ")" << std::endl;
+		if(xPos <= 0 || yPos <= 0 || xPos > WIDTH || yPos > HEIGHT) {
+			break;
+		}
+		if(!changingLook)
+			break;
+		yaw += event.motion.xrel * m_Speed;
+		pitch += event.motion.yrel * m_Speed;
+		if(pitch >= 90.0f)
+			pitch = 89.0f;
+		if(pitch <= -90.0f)
+			pitch = -89.0f;
+		m_Front = glm::normalize(glm::vec3(cos(glm::radians(yaw)) * cos(glm::radians(pitch)), sin(glm::radians(pitch)), sin(glm::radians(yaw)) * cos(glm::radians(pitch))));
+		break;
+	case SDL_MOUSEWHEEL:
+		std::cout << "Scrolled " << event.wheel.y << " steps" << std::endl;
+		break;
+
+	}
 }

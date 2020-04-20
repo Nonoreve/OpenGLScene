@@ -42,9 +42,9 @@ class Camera {
 
 	public:
 		// TODO add some kind of inheritance with camera and RenderedObject (SceneObject ?)
-		// TODO adapt values
+		// TODO adapt values, add them as parameters
 		inline Camera() :
-			m_Speed(0.5f),
+			m_Speed(0.1f),
 			m_Front(glm::vec3(0.0f, 0.0f, -1.0f)),
 			m_Up(glm::vec3(0.0f, 1.0f, 0.0f)),
 			m_Position(glm::vec3(0.0f, 0.0f, 0.0f)),
@@ -59,13 +59,16 @@ class Camera {
 
 		void UpdateView();
 		void UpdateAnimations(float currentTime);
+		
 		inline void AddChild(Animation* obj) {
 			m_AnimChilds.push_back(obj);
 		}
 		inline void AddAnimation(Animation* anim) {
 			AddChild(anim);   // TODO messy need further refactoring
 		}
+		
 		void Rotate(float angle, glm::vec3 position);
+		
 		inline glm::mat4 getProjectionM() {
 			return m_Projection;
 		}
@@ -75,6 +78,9 @@ class Camera {
 		inline glm::vec3 getPosition() {
 			return m_Position;
 		}
+		
+		void inputMove(const SDL_Event &event);
+		
 };
 
 #endif // CAMERA_H

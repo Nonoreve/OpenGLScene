@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
 		glm::vec3 matColor(1.0f, 1.0f, 1.0f);
 		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
 		Material defaultMat(matColor, propert);
-		
+
 		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 		glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
 		Light sun = Light(lightPos, lightColor);
@@ -170,7 +170,7 @@ int main(int argc, char* argv[]) {
 		squareVB.Unbind();
 		defaultShader->Unbind();
 
-		
+
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
 		const unsigned int vertices = cube->getNbVertices();
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
 		cubeVB.Unbind();
 		lightShader->Unbind();
 
-		
+
 		std::stack<glm::mat4> matrices;
 		float currentTime = 0.0f;
 
@@ -216,13 +216,14 @@ int main(int argc, char* argv[]) {
 					case SDL_WINDOWEVENT_CLOSE:
 						isOpened = false;
 						break;
-					default:
-						break;
 					}
 					break;
-					//We can add more event, like listening for the keyboard or the mouse. See SDL_Event documentation for more details
+				default:
+					camera.inputMove(event);
 				}
 			}
+			
+			camera.UpdateView();
 
 
 			renderer.Clear();
