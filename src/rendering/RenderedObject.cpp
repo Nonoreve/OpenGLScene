@@ -18,7 +18,7 @@
 
 #include <algorithm>
 #include <iostream>
-#include <glm/detail/type_mat.hpp>
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 RenderedObject::RenderedObject(RenderedObject& parent) : m_Transform(glm::mat4(1.0f)), m_Visible(false), m_Parent(&parent) {

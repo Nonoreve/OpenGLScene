@@ -5,12 +5,13 @@
 
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <glm/detail/type_mat.hpp>
-#include <glm/detail/type_vec.hpp>
+#include <glm/glm.hpp>
 #include <iostream>
 #include <cstdlib>
 #include <unordered_map>
 #include "logger.h"
+#include <string>
+
 
 /** \brief A graphic program.*/
 class Shader {

@@ -49,8 +49,8 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
 	FILE* fragmentShader = fopen(fragmentPath, "r");
 	FILE* vertexShader = fopen(vertexPath, "r");
 	if(!fragmentShader || !vertexShader) {
-		std::cerr << "Error opening shader files" << std::endl;
-		exit(1);
+		std::cerr << "Error opening shader files (probably not found)" << std::endl;
+		//exit(1);
 	}
 
 	auto shader = Shader::loadFromFiles(vertexShader, fragmentShader);
@@ -59,8 +59,11 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
 // 	shader = Shader::loadFromStrings(
 // 		"#version 330 core\nlayout(location = 0) in vec4 position;\nvoid main(){gl_Position = position;}",
 // 		"#version 330 core\nlayout(location = 0) out vec4 color;\nvoid main(){color = vec4(1.0, 0.0, 0.0, 1.0);}");
-	if(shader == 0)
-		exit(EXIT_FAILURE);
+
+	if (shader == 0 || shader == nullptr) {
+		std::cerr << "Shader null" << std::endl;
+		//exit(EXIT_FAILURE);
+	}
 	return shader;
 }
 
@@ -101,6 +104,8 @@ int main(int argc, char* argv[]) {
 	glewInit();
 	SDL_GL_SetSwapInterval(1);
 
+
+
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	{
 		//Start using OpenGL to draw something on screen
@@ -126,11 +131,16 @@ int main(int argc, char* argv[]) {
 		glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
 		Light sun = Light(lightPos, lightColor);
 
-		auto defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag");
+		auto defaultShader = setupShaders("resources/Shaders/Tex2.vert", "resources/Shaders/Tex2.frag");
 		defaultShader->bindAttributes(2, "v_Position", "v_UV");
 
+
+		//J'ai enleve car long de changer tous les shader en 140
+		/*
 		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag");
 		lightShader->bindAttributes(3, "v_Position", "v_UV", "v_Normal");
+		*/
+		
 
 		// TODO color * texture in shader
 		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
@@ -161,16 +171,16 @@ int main(int argc, char* argv[]) {
 		ComplexVertexBuffer squareVB(square->getNbVertices() * (POS_DIM + TEX_CHANNELS + 3) * sizeof(float), square->getNbVertices(), BUF_COMPONENTS, squarePosData, squareTexData, squareNormData);
 
 		VertexBufferLayout squareLayout;
-		squareLayout.Push<float>(POS_DIM);
-		squareLayout.Push<float>(TEX_CHANNELS);
-		squareLayout.Push<float>(3);
+		squareLayout.Push(POS_DIM,GL_FLOAT);
+		squareLayout.Push(TEX_CHANNELS, GL_FLOAT);
+		squareLayout.Push(3, GL_FLOAT);
 		squareVA.addBuffer(squareVB, squareLayout);
 		defaultShader->Bind();
 		RenderedObject texSquare(squareVA, square, defaultMat, texture, root, defaultShader);
 		squareVB.Unbind();
 		defaultShader->Unbind();
 
-
+		/*
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
 		const unsigned int vertices = cube->getNbVertices();
@@ -180,14 +190,15 @@ int main(int argc, char* argv[]) {
 		ComplexVertexBuffer cubeVB(vertices * (_3D + _3D + TEX_CHANNELS) * sizeof(float), vertices, 3, posData, texData, normalsData);
 
 		VertexBufferLayout cubeLayout;
-		cubeLayout.Push<float>(_3D);
-		cubeLayout.Push<float>(TEX_CHANNELS);
-		cubeLayout.Push<float>(_3D);
+		cubeLayout.Push(_3D, GL_FLOAT);
+		cubeLayout.Push(TEX_CHANNELS, GL_FLOAT);
+		cubeLayout.Push(_3D, GL_FLOAT);
 		cubeVA.addBuffer(cubeVB, cubeLayout);
 		lightShader->Bind();
 		RenderedObject box(cubeVA, cube, defaultMat, cubeTexture, root, lightShader);
 		cubeVB.Unbind();
 		lightShader->Unbind();
+		*/
 
 
 		std::stack<glm::mat4> matrices;
@@ -198,8 +209,10 @@ int main(int argc, char* argv[]) {
 		texSquare.Move(glm::vec3(5, -5, -10));
 		texSquare.SetScale(scaling);
 
+		/*
 		box.Move(glm::vec3(-5, 5, -10));
 		box.SetScale(scaling);
+		*/
 
 		bool isOpened = true;
 		//Main application loop
