@@ -1,16 +1,16 @@
-#version 330
+#version 140
 precision mediump float;
 
-layout (location = 0) in vec4 v_Position;
-layout (location = 1) in vec2 v_UV;
-layout (location = 2) in vec3 v_Normal;
+attribute vec4 v_Position;
+attribute vec2 v_UV;
+attribute vec3 v_Normal;
 
 uniform mat4 u_Projection;
 uniform mat4 u_ModelView;
 
-out vec3 worldPosition;
-out vec3 worldNormal;
-out vec2 uv;
+varying vec3 worldPosition;
+varying vec3 worldNormal;
+varying vec2 uv;
 
 void main() {
     gl_Position = u_Projection * u_ModelView * v_Position;
