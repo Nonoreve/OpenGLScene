@@ -131,16 +131,11 @@ int main(int argc, char* argv[]) {
 		glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
 		Light sun = Light(lightPos, lightColor);
 
-		auto defaultShader = setupShaders("resources/Shaders/Tex2.vert", "resources/Shaders/Tex2.frag");
+		auto defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag");
 		defaultShader->bindAttributes(2, "v_Position", "v_UV");
 
-
-		//J'ai enleve car long de changer tous les shader en 140
-		/*
 		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag");
 		lightShader->bindAttributes(3, "v_Position", "v_UV", "v_Normal");
-		*/
-		
 
 		// TODO color * texture in shader
 		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
@@ -180,7 +175,7 @@ int main(int argc, char* argv[]) {
 		squareVB.Unbind();
 		defaultShader->Unbind();
 
-		/*
+
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
 		const unsigned int vertices = cube->getNbVertices();
@@ -198,7 +193,6 @@ int main(int argc, char* argv[]) {
 		RenderedObject box(cubeVA, cube, defaultMat, cubeTexture, root, lightShader);
 		cubeVB.Unbind();
 		lightShader->Unbind();
-		*/
 
 
 		std::stack<glm::mat4> matrices;
@@ -209,10 +203,8 @@ int main(int argc, char* argv[]) {
 		texSquare.Move(glm::vec3(5, -5, -10));
 		texSquare.SetScale(scaling);
 
-		/*
 		box.Move(glm::vec3(-5, 5, -10));
 		box.SetScale(scaling);
-		*/
 
 		bool isOpened = true;
 		//Main application loop

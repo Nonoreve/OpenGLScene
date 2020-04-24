@@ -1,9 +1,9 @@
-#version 330
+#version 140
 precision mediump float;
 
-in vec3 worldNormal;
-in vec3 worldPosition;
-in vec2 uv;
+varying vec3 worldNormal;
+varying vec3 worldPosition;
+varying vec2 uv;
 
 uniform sampler2D u_Texture;
 uniform vec4 u_K;
@@ -11,8 +11,6 @@ uniform vec3 u_Color;
 uniform vec3 u_LightPosition;
 uniform vec3 u_LightColor;
 uniform vec3 u_CameraPosition;
-
-layout (location = 0) out vec4 color;
 
 void main() {
     vec3 L = normalize(u_LightPosition - worldPosition);
@@ -25,5 +23,5 @@ void main() {
     
     vec3 result = (ambient + diffuse + specular); // voir si le specular prend en compte la couleur
 
-    color = vec4(result,1.0) * texture2D(u_Texture, uv);
+    gl_FragColor = vec4(result,1.0) * texture2D(u_Texture, uv);
 }
