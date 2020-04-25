@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stack>
+#include <cstdarg>
 
 //SDL Libraries
 #include <SDL2/SDL.h>
@@ -44,8 +45,9 @@
 #define TEX_CHANNELS 2 // dimension of textures coordinates
 #define VP_TRIANGLE 3 // Vertices per triangle
 
-Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
-
+Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned int count, ...) {
+	va_list args;
+	va_start(args, count);
 	FILE* fragmentShader = fopen(fragmentPath, "r");
 	FILE* vertexShader = fopen(vertexPath, "r");
 	if(!fragmentShader || !vertexShader) {
@@ -53,7 +55,8 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath) {
 		//exit(1);
 	}
 
-	auto shader = Shader::loadFromFiles(vertexShader, fragmentShader);
+	auto shader = Shader::loadFromFiles(vertexShader, fragmentShader, count, args);
+	va_end(args);
 	fclose(fragmentShader);
 	fclose(vertexShader);
 // 	shader = Shader::loadFromStrings(
@@ -131,11 +134,9 @@ int main(int argc, char* argv[]) {
 		glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
 		Light sun = Light(lightPos, lightColor);
 
-		auto defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag");
-		defaultShader->bindAttributes(2, "v_Position", "v_UV");
+		auto defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag", 2, "v_Position", "v_UV");
 
-		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag");
-		lightShader->bindAttributes(3, "v_Position", "v_UV", "v_Normal");
+		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag", 3, "v_Position", "v_UV", "v_Normal");
 
 		// TODO color * texture in shader
 		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);

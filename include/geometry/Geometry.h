@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include "buffer/vertexbuffer.h"
 
 /* \brief Represent a geometry*/
 class Geometry
@@ -22,6 +23,8 @@ class Geometry
 
         /* \brief Destructor. Destroy the data */
         virtual ~Geometry();
+		
+		//virtual VertexBuffer bufferFactory();
 
 
 
