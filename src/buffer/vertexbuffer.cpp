@@ -18,14 +18,23 @@
 #include "buffer/vertexbuffer.h"
 #include "rendering/renderer.h"
 
-VertexBuffer::VertexBuffer(const void* data, unsigned int size, unsigned int elements) : m_Elements(elements){
+VertexBuffer::VertexBuffer(const void* data, unsigned int size, unsigned int elements){
+	Init(data, size, elements);
+}
+
+VertexBuffer::VertexBuffer(){
+	// To let complexVertexBuffer do stuff before initialising
+}
+
+VertexBuffer::~VertexBuffer(){
+	GLCall(glDeleteBuffers(1, &m_RendererID));
+}
+
+void VertexBuffer::Init(const void* data, unsigned int size, unsigned int elements){
+	m_Elements = elements;
 	GLCall(glGenBuffers(1, &m_RendererID));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW));
-}
-
-VertexBuffer::VertexBuffer::~VertexBuffer(){
-	GLCall(glDeleteBuffers(1, &m_RendererID));
 }
 
 void VertexBuffer::Bind() const{

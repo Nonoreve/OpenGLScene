@@ -18,14 +18,25 @@
 #include <iostream>
 #include "rendering/renderer.h"
 
-ComplexVertexBuffer::ComplexVertexBuffer(unsigned int size, unsigned int elements, int count, ...) : VertexBuffer(NULL, size, elements) {
+ComplexVertexBuffer::ComplexVertexBuffer(unsigned int elements, int count, ...) : VertexBuffer() {
 	va_list args;
-	unsigned int offset = 0;
 	va_start(args, count);
+	unsigned int size = 0;
+	// compute total size
 	for (int i = 0; i < count; i++) {
 		SubData bufData = va_arg(args, SubData);
-		GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, bufData.size, bufData.data));
-		offset += bufData.size;
+		size += bufData.sizePerVertex * elements;
 	}
 	va_end(args);
+	Init(NULL, size, elements);
+	va_list args2;
+	va_start(args2, count);
+	unsigned int offset = 0;
+	for (int i = 0; i < count; i++) {
+		SubData bufData = va_arg(args2, SubData);
+		unsigned int bufSize = bufData.sizePerVertex * elements;
+		GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, bufSize, bufData.data));
+		offset += bufSize;
+	}
+	va_end(args2);
 }

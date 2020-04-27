@@ -8,9 +8,9 @@ Square::Square() : Geometry() {
 
 	float positions[] = {
 		-0.50f, -0.50f,
-		 0.50f, -0.50f,
-		 0.50f,  0.50f,
-		 0.50f,  0.50f,
+		0.50f, -0.50f,
+		0.50f,  0.50f,
+		0.50f,  0.50f,
 		-0.50f,  0.50f,
 		-0.50f, -0.50f
 	};
@@ -41,4 +41,7 @@ Square::Square() : Geometry() {
 	for(uint32_t i = 0; i < 3 * VERTICES; i++)
 		m_normals[i] = normals[i];
 	m_nbVertices = VERTICES;
+	m_DimPositions = 2;
+	m_DimUVs = 2;
+	m_DimNormals = 3;
 }

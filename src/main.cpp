@@ -39,6 +39,7 @@
 #include "texture.h"
 #include "vertexarray.h"
 
+// TODO delete
 #define _2D 2
 #define _3D 3
 #define COL_CHANNELS 3 // components to defien one color (rgb = 3, rgba = 4, ...)
@@ -161,11 +162,7 @@ int main(int argc, char* argv[]) {
 
 		VertexArray squareVA;
 		Geometry* square = new Square();
-		SubData squarePosData = {square->getNbVertices()* POS_DIM * sizeOfFloat, square->getVertices()};
-		SubData squareTexData = {square->getNbVertices()* TEX_CHANNELS * sizeOfFloat, square->getUVs()};
-		SubData squareNormData = {square->getNbVertices() * 3 * sizeOfFloat, square->getNormals()};
-		ComplexVertexBuffer squareVB(square->getNbVertices() * (POS_DIM + TEX_CHANNELS + 3) * sizeof(float), square->getNbVertices(), BUF_COMPONENTS, squarePosData, squareTexData, squareNormData);
-
+		ComplexVertexBuffer squareVB = square->bufferFactory();
 		VertexBufferLayout squareLayout;
 		squareLayout.Push(POS_DIM,GL_FLOAT);
 		squareLayout.Push(TEX_CHANNELS, GL_FLOAT);
@@ -180,10 +177,10 @@ int main(int argc, char* argv[]) {
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
 		const unsigned int vertices = cube->getNbVertices();
-		SubData posData = {vertices* _3D * sizeOfFloat, cube->getVertices()};
-		SubData texData = {vertices* TEX_CHANNELS * sizeOfFloat, cube->getUVs()};
-		SubData normalsData = {vertices* _3D * sizeOfFloat, cube->getNormals()};
-		ComplexVertexBuffer cubeVB(vertices * (_3D + _3D + TEX_CHANNELS) * sizeof(float), vertices, 3, posData, texData, normalsData);
+		SubData posData = {_3D * sizeOfFloat, cube->getVertices()};
+		SubData texData = {TEX_CHANNELS * sizeOfFloat, cube->getUVs()};
+		SubData normalsData = {_3D * sizeOfFloat, cube->getNormals()};
+		ComplexVertexBuffer cubeVB(vertices, 3, posData, texData, normalsData);
 
 		VertexBufferLayout cubeLayout;
 		cubeLayout.Push(_3D, GL_FLOAT);

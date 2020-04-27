@@ -54,3 +54,10 @@ Geometry::~Geometry()
     if(m_uvs)
         free(m_uvs);
 }
+
+ComplexVertexBuffer Geometry::bufferFactory() {
+	SubData squarePosData = {m_DimPositions * static_cast<unsigned int>(sizeof(float)), getVertices()};
+	SubData squareTexData = {m_DimUVs * static_cast<unsigned int>(sizeof(float)), getUVs()};
+	SubData squareNormData = {m_DimNormals * static_cast<unsigned int>(sizeof(float)), getNormals()};
+	return ComplexVertexBuffer(getNbVertices(), 3, squarePosData, squareTexData, squareNormData);
+}
