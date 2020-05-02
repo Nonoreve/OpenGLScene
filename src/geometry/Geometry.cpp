@@ -1,63 +1,64 @@
 #include "geometry/Geometry.h"
 #include <cstring>
 
-Geometry::Geometry(){}
+Geometry::Geometry() {}
 
-Geometry::Geometry(Geometry&& geom)
-{
-    m_vertices = geom.m_vertices;
-    m_normals  = geom.m_normals;
-    m_uvs      = geom.m_uvs;
-    m_nbVertices = geom.m_nbVertices;
+Geometry::Geometry(Geometry&& geom) {
+	m_vertices = geom.m_vertices;
+	m_normals  = geom.m_normals;
+	m_uvs      = geom.m_uvs;
+	m_nbVertices = geom.m_nbVertices;
 
-    geom.m_vertices = geom.m_normals = geom.m_uvs = NULL;
+	geom.m_vertices = geom.m_normals = geom.m_uvs = NULL;
 }
 
-Geometry::Geometry(const Geometry& geom)
-{
-    *this = geom;
+Geometry::Geometry(const Geometry& geom) {
+	*this = geom;
 }
 
-Geometry& Geometry::operator=(const Geometry& geom)
-{
-    if(this == &geom)
-        return *this;
+Geometry& Geometry::operator=(const Geometry& geom) {
+	if(this == &geom)
+		return *this;
 
-    if(geom.m_vertices != NULL)
-    {
-        m_vertices = (float*)malloc(sizeof(float) * 3 * geom.m_nbVertices);
-        memcpy(m_vertices, geom.m_vertices, sizeof(float) * 3 * geom.m_nbVertices);
-    }
+	if(geom.m_vertices != NULL) {
+		m_vertices = (float*)malloc(sizeof(float) * 3 * geom.m_nbVertices);
+		memcpy(m_vertices, geom.m_vertices, sizeof(float) * 3 * geom.m_nbVertices);
+	}
 
-    if (geom.m_normals != NULL)
-    {
-        m_normals = (float*)malloc(sizeof(float) * 3 * geom.m_nbVertices);
-        memcpy(m_normals, geom.m_normals, sizeof(float) * 3 * geom.m_nbVertices);
-    }
+	if(geom.m_normals != NULL) {
+		m_normals = (float*)malloc(sizeof(float) * 3 * geom.m_nbVertices);
+		memcpy(m_normals, geom.m_normals, sizeof(float) * 3 * geom.m_nbVertices);
+	}
 
-    if (geom.m_uvs != NULL)
-    {
-        m_uvs = (float*)malloc(sizeof(float) * 2 * geom.m_nbVertices);
-        memcpy(m_uvs, geom.m_uvs, sizeof(float) * 2 * geom.m_nbVertices);
-    }
-    m_nbVertices = geom.m_nbVertices;
+	if(geom.m_uvs != NULL) {
+		m_uvs = (float*)malloc(sizeof(float) * 2 * geom.m_nbVertices);
+		memcpy(m_uvs, geom.m_uvs, sizeof(float) * 2 * geom.m_nbVertices);
+	}
+	m_nbVertices = geom.m_nbVertices;
 
-    return *this;
+	return *this;
 }
 
-Geometry::~Geometry()
-{
-    if(m_vertices)
-        free(m_vertices);
-    if(m_normals)
-        free(m_normals);
-    if(m_uvs)
-        free(m_uvs);
+Geometry::~Geometry() {
+	if(m_vertices)
+		free(m_vertices);
+	if(m_normals)
+		free(m_normals);
+	if(m_uvs)
+		free(m_uvs);
 }
 
 ComplexVertexBuffer Geometry::bufferFactory() {
-	SubData squarePosData = {m_DimPositions * static_cast<unsigned int>(sizeof(float)), getVertices()};
-	SubData squareTexData = {m_DimUVs * static_cast<unsigned int>(sizeof(float)), getUVs()};
-	SubData squareNormData = {m_DimNormals * static_cast<unsigned int>(sizeof(float)), getNormals()};
+	SubData squarePosData = {m_DimPositions* static_cast<unsigned int>(sizeof(float)), getVertices()};
+	SubData squareTexData = {m_DimUVs* static_cast<unsigned int>(sizeof(float)), getUVs()};
+	SubData squareNormData = {m_DimNormals* static_cast<unsigned int>(sizeof(float)), getNormals()};
 	return ComplexVertexBuffer(getNbVertices(), 3, squarePosData, squareTexData, squareNormData);
+}
+
+VertexBufferLayout Geometry::bufferLayoutFactory() {
+	VertexBufferLayout bufferLayout;
+	bufferLayout.Push(m_DimPositions,GL_FLOAT);
+	bufferLayout.Push(m_DimUVs, GL_FLOAT);
+	bufferLayout.Push(m_DimNormals, GL_FLOAT);
+	return bufferLayout;
 }

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "buffer/complexvertexbuffer.h"
+#include "buffer/vertexbufferlayout.h"
 
 #define COL_CHANNELS 3 // components to define one color (rgb = 3, rgba = 4, ...)
 #define VP_TRIANGLE 3 // Vertices per triangle
@@ -28,8 +29,7 @@ class Geometry {
 
 		/* Build a vertex buffer containing the geometry data */
 		virtual ComplexVertexBuffer bufferFactory();
-
-
+		virtual VertexBufferLayout bufferLayoutFactory();
 
 		/* \brief Get the vertices data of the geometry
 		 * \return const array on the vertices data. Use getNbVertices to get how many vertices the array contains (size(array) == 3*nbVertices) */

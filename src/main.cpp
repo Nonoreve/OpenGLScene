@@ -163,25 +163,16 @@ int main(int argc, char* argv[]) {
 		VertexArray squareVA;
 		Geometry* square = new Square();
 		ComplexVertexBuffer squareVB = square->bufferFactory();
-		VertexBufferLayout squareLayout;
-		squareLayout.Push(POS_DIM,GL_FLOAT);
-		squareLayout.Push(TEX_CHANNELS, GL_FLOAT);
-		squareLayout.Push(3, GL_FLOAT);
-		squareVA.addBuffer(squareVB, squareLayout);
+		squareVA.addBuffer(squareVB, square->bufferLayoutFactory());
 		defaultShader->Bind();
 		RenderedObject texSquare(squareVA, square, defaultMat, texture, root, defaultShader);
 		squareVB.Unbind();
 		defaultShader->Unbind();
 
-
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
 		ComplexVertexBuffer cubeVB = cube->bufferFactory();
-		VertexBufferLayout cubeLayout;
-		cubeLayout.Push(_3D, GL_FLOAT);
-		cubeLayout.Push(TEX_CHANNELS, GL_FLOAT);
-		cubeLayout.Push(_3D, GL_FLOAT);
-		cubeVA.addBuffer(cubeVB, cubeLayout);
+		cubeVA.addBuffer(cubeVB, cube->bufferLayoutFactory());
 		lightShader->Bind();
 		RenderedObject box(cubeVA, cube, defaultMat, cubeTexture, root, lightShader);
 		cubeVB.Unbind();
