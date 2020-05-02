@@ -20,7 +20,7 @@
 Texture::Texture(const std::string& path) : m_FilePath(path), m_LocalBuffer(nullptr), m_Width(0), m_Height(0), m_BPP(0) {
 	SDL_Surface* img = IMG_Load(path.c_str());
 	if (!img) {
-		std::cerr << "[SDL_image Error] Can't read file '" << path << "'." << std::endl;
+		std::cerr << "[SDL_image Error] Can't read file '" << path << "'" << std::endl;
 	}
 	m_LocalBuffer = SDL_ConvertSurfaceFormat(img, SDL_PIXELFORMAT_RGBA32, 0);
 	SDL_FreeSurface(img);

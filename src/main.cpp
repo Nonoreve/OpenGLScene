@@ -52,7 +52,7 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 	FILE* fragmentShader = fopen(fragmentPath, "r");
 	FILE* vertexShader = fopen(vertexPath, "r");
 	if(!fragmentShader || !vertexShader) {
-		std::cerr << "Error opening shader files (probably not found)" << std::endl;
+		std::cerr << "[File Error] can't open shader" << std::endl;
 		//exit(1);
 	}
 
@@ -65,7 +65,7 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 // 		"#version 330 core\nlayout(location = 0) out vec4 color;\nvoid main(){color = vec4(1.0, 0.0, 0.0, 1.0);}");
 
 	if (shader == 0 || shader == nullptr) {
-		std::cerr << "Shader null" << std::endl;
+		std::cerr << "[Shader Error] NULL" << std::endl;
 		//exit(EXIT_FAILURE);
 	}
 	return shader;
@@ -176,12 +176,7 @@ int main(int argc, char* argv[]) {
 
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
-		const unsigned int vertices = cube->getNbVertices();
-		SubData posData = {_3D * sizeOfFloat, cube->getVertices()};
-		SubData texData = {TEX_CHANNELS * sizeOfFloat, cube->getUVs()};
-		SubData normalsData = {_3D * sizeOfFloat, cube->getNormals()};
-		ComplexVertexBuffer cubeVB(vertices, 3, posData, texData, normalsData);
-
+		ComplexVertexBuffer cubeVB = cube->bufferFactory();
 		VertexBufferLayout cubeLayout;
 		cubeLayout.Push(_3D, GL_FLOAT);
 		cubeLayout.Push(TEX_CHANNELS, GL_FLOAT);

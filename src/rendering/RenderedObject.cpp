@@ -70,7 +70,7 @@ void RenderedObject::SetParent(RenderedObject& obj) {
 
 void RenderedObject::ChangeGeometry(Geometry* geometry) {
 	if(m_Geometry != nullptr) {
-		std::cerr << "Unimplemented behavior !" << std::endl;
+		std::cerr << "[RenderedObject Error] Unimplemented behavior" << std::endl;
 		return;
 	}
 
