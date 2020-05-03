@@ -6,10 +6,10 @@ varying vec3 worldPosition;
 varying vec2 uv;
 
 uniform sampler2D u_Texture;
+uniform vec4 u_Color;
 uniform vec4 u_K;
-uniform vec3 u_Color;
-uniform vec3 u_LightPosition;
 uniform vec3 u_LightColor;
+uniform vec3 u_LightPosition;
 uniform vec3 u_CameraPosition;
 
 void main() {
@@ -17,11 +17,11 @@ void main() {
     vec3 V = normalize(u_CameraPosition - worldPosition);
     vec3 N = normalize(worldNormal);
 
-    vec3 ambient = u_K.x * u_Color * u_LightColor;
-    vec3 diffuse = u_K.y * u_Color * u_LightColor * max(0.0, dot(N,L)); // on prend N ou varyWolrNormal ?
-    vec3 specular = u_K.z * pow(max(0.0,dot(reflect(-L, N), -V)), u_K.w) * u_LightColor;
+    vec3 ambient = u_K.x * u_Color.xyz * u_LightColor;
+    vec3 diffuse = u_K.y * u_Color.xyz * u_LightColor * max(0.0, dot(N,L));
+    vec3 specular = u_K.z * pow(max(0.0, dot(reflect(-L, N), -V)), u_K.w) * u_LightColor;
     
-    vec3 result = (ambient + diffuse + specular); // voir si le specular prend en compte la couleur
+    vec4 result = vec4((ambient + diffuse + specular), u_Color.w);
 
-    gl_FragColor = vec4(result,1.0) * texture2D(u_Texture, uv);
+    gl_FragColor = result * texture2D(u_Texture, uv);
 }

@@ -104,10 +104,10 @@ void RenderedObject::Afficher(std::stack<glm::mat4>& matrices, Camera camera, Li
 	m_Shader->SetUniformMat4f("u_Projection", camera.getProjectionM());
 	m_Shader->SetUniformMat4f("u_ModelView", modelView);
 	m_Shader->SetUniform1i("u_Texture", 0); // TEXTURE_SLOT
+	m_Shader->SetUniformVec4f("u_Color", m_Material->getColor());
 	m_Shader->SetUniformVec4f("u_K", m_Material->getComponents());
-	m_Shader->SetUniformVec3f("u_Color", m_Material->getColor());
-	m_Shader->SetUniformVec3f("u_LightPosition", sun.m_Position);
 	m_Shader->SetUniformVec3f("u_LightColor", sun.m_Color);
+	m_Shader->SetUniformVec3f("u_LightPosition", sun.m_Position);
 	m_Shader->SetUniformVec3f("u_CameraPosition", camera.getPosition());
 
 	glDrawArrays(GL_TRIANGLES, 0, m_Geometry->getNbVertices());

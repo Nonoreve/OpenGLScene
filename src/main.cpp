@@ -39,13 +39,6 @@
 #include "texture.h"
 #include "vertexarray.h"
 
-// TODO delete
-#define _2D 2
-#define _3D 3
-#define COL_CHANNELS 3 // components to defien one color (rgb = 3, rgba = 4, ...)
-#define TEX_CHANNELS 2 // dimension of textures coordinates
-#define VP_TRIANGLE 3 // Vertices per triangle
-
 Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned int count, ...) {
 	va_list args;
 	va_start(args, count);
@@ -127,38 +120,30 @@ int main(int argc, char* argv[]) {
 		RenderedObject root;
 		Camera camera;
 
-		glm::vec3 matColor(1.0f, 1.0f, 1.0f);
+		glm::vec4 matColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
 		Material defaultMat(matColor, propert);
 
 		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-		glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
+		glm::vec4 lightPos(0.0f, 1.0f, 0.0f, 1.0f);
 		Light sun = Light(lightPos, lightColor);
 
 		auto defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag", 2, "v_Position", "v_UV");
 
 		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag", 3, "v_Position", "v_UV", "v_Normal");
 
-		// TODO color * texture in shader
-		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-
 		Texture texture("resources/img/NonoreveLogo.png");
 		Texture cubeTexture("resources/img/grass.png");
-		//shader->SetUniform1i("u_Texture", 0);
 
-
-// 		const unsigned int VERTICES = 4;
-		const unsigned int TRIANGLES = 2;
-		const unsigned int POS_DIM = _2D; // either 2D or 3D
-		const unsigned int BUF_COMPONENTS = 3; // number of arrays
-		const unsigned int sizeOfFloat = static_cast<unsigned int>(sizeof(float));
-
+		
 		// TODO include in geometry
-		unsigned int indices[] = {
-			0, 1, 2,
-			2, 3, 0
-		};
-		//IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
+// 		const unsigned int VERTICES = 4;
+// 		const unsigned int TRIANGLES = 2;
+// 		unsigned int indices[] = {
+// 			0, 1, 2,
+// 			2, 3, 0
+// 		};
+// 		IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
 
 		VertexArray squareVA;
 		Geometry* square = new Square();
