@@ -18,17 +18,22 @@
 #define VERTEXBUFFER_H
 
 class VertexBuffer {
-private:
-	unsigned int m_RendererID;
-	unsigned int m_Elements;
-public:
-	VertexBuffer(const void* data, unsigned int size, unsigned int elements);
-	~VertexBuffer();
-	
-	void Bind() const;
-	void Unbind() const;
-	
-	inline unsigned int GetElements() const {return m_Elements;};
+	private:
+		unsigned int m_RendererID;
+		unsigned int m_Elements;
+	protected:
+		VertexBuffer();
+		void Init(const void* data, unsigned int size, unsigned int elements);
+	public:
+		VertexBuffer(const void* data, unsigned int size, unsigned int elements);
+		~VertexBuffer();
+
+		void Bind() const;
+		void Unbind() const;
+
+		inline unsigned int GetElements() const {
+			return m_Elements;
+		};
 };
 
 #endif // VERTEXBUFFER_H

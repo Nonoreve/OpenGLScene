@@ -12,7 +12,7 @@ Shader::~Shader() {
 	glDeleteShader(m_fragID);
 }
 
-Shader* Shader::loadFromFiles(FILE* vertexFile, FILE* fragFile) {
+Shader* Shader::loadFromFiles(FILE* vertexFile, FILE* fragFile, unsigned int count, va_list args) {	
 	uint32_t vertexFileSize = 0;
 	uint32_t fragFileSize   = 0;
 	char* vertexCodeC;
@@ -37,7 +37,8 @@ Shader* Shader::loadFromFiles(FILE* vertexFile, FILE* fragFile) {
 	fragCodeC[fragFileSize] = '\0';
 
 	/* Return the shader and free everything*/
-	Shader* s = loadFromStrings(std::string(vertexCodeC), std::string(fragCodeC));
+	Shader* s = loadFromStrings(std::string(vertexCodeC), std::string(fragCodeC), count, args);
+	va_end(args);
 
 	free(vertexCodeC);
 	free(fragCodeC);
@@ -45,7 +46,7 @@ Shader* Shader::loadFromFiles(FILE* vertexFile, FILE* fragFile) {
 	return s;
 }
 
-Shader* Shader::loadFromStrings(const std::string& vertexString, const std::string& fragString) {
+Shader* Shader::loadFromStrings(const std::string& vertexString, const std::string& fragString, unsigned int count, va_list args) {
 	Shader* shader = new Shader();
 
 	/* Create a program and compile each shader component (vertex, fragment) */
@@ -58,7 +59,11 @@ Shader* Shader::loadFromStrings(const std::string& vertexString, const std::stri
 	glAttachShader(shader->m_programID, shader->m_fragID);
 
 	/* Do the attributes binding */
-	// shader->bindAttributes(); // done manually to pass the names
+	for (unsigned int i = 0; i < count; i++) {
+		const char* name = va_arg(args, const char*);
+		GLCall(glBindAttribLocation(shader->m_programID, i, name));
+	}
+	va_end(args);
 
 	/* Link the program. */
 	glLinkProgram(shader->m_programID);
@@ -113,16 +118,6 @@ int Shader::getVertexID() const {
 
 int Shader::getFragID() const {
 	return m_fragID;
-}
-
-void Shader::bindAttributes(unsigned int count, ...) {
-	va_list args;
-	va_start(args, count);
-	for (unsigned int i = 0; i < count; i++) {
-		const char* name = va_arg(args, const char*);
-		GLCall(glBindAttribLocation(m_programID, i, name));
-	}
-	va_end(args);
 }
 
 void Shader::Bind() const {

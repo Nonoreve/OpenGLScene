@@ -73,24 +73,24 @@ void Camera::inputMove(const SDL_Event& event) {
 			m_Position += glm::normalize(glm::cross(m_Front, m_Up)) * m_Speed;
 			break;
 		default:
-			std::cout << "Unhandeld key pressed " << event.key.keysym.sym << std::endl;
+			std::cout << "[Camera Warning] Unhandeld key pressed " << event.key.keysym.sym << std::endl;
 			break;
 		}
 		break;
 	case SDL_MOUSEBUTTONDOWN:
 		switch(event.button.button) {
 		case SDL_BUTTON_LEFT:
-			std::cout << "Left click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
+			std::cout << "[Camera Warning] Left click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
 			break;
 		case SDL_BUTTON_MIDDLE:
-			std::cout << "Middle click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
+			std::cout << "[Camera Warning] Middle click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
 			break;
 		case SDL_BUTTON_RIGHT:
-			std::cout << "Right click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
+			std::cout << "[Camera Warning] Right click at coordinates (" << event.button.x << ", " << event.button.y << ")" << std::endl;
 			changingLook = true;
 			break;
 		default:
-			std::cout << "Unhandeld mouse button pressed " << event.button.button << std::endl;
+			std::cout << "[Camera Warning] Unhandeld mouse button pressed " << event.button.button << std::endl;
 			break;
 		}
 		break;

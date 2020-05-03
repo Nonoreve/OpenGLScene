@@ -34,9 +34,6 @@ class Shader {
 		 * \return the fragment ID */
 		int getFragID() const;
 
-		/* \brief Bind the attributes to known locations (vPosition to 0, vColor to 1 for example)*/
-		virtual void bindAttributes(unsigned int count, ...);
-
 		void Bind() const;
 		void Unbind() const;
 
@@ -53,7 +50,7 @@ class Shader {
 		 * \param fragmentFile the fragment file.
 		 *
 		 * \return the Shader constructed or NULL if error*/
-		static Shader* loadFromFiles(FILE* vertexFile, FILE* fragFile);
+		static Shader* loadFromFiles(FILE* vertexFile, FILE* fragFile, unsigned int count, va_list args);
 
 		/** \brief create a shader from a vertex and a fragment string.
 		 * \param vertexString the vertex string.
@@ -61,7 +58,7 @@ class Shader {
 		 *
 		 * \return the Shader constructed or NULL if error
 		 * */
-		static Shader* loadFromStrings(const std::string& vertexString, const std::string& fragString);
+		static Shader* loadFromStrings(const std::string& vertexString, const std::string& fragString, unsigned int count, va_list args);
 	private:
 		GLuint m_programID; /*!< The shader   program ID*/
 		GLuint m_vertexID;  /*!< The vertex   shader  ID*/

@@ -36,15 +36,15 @@ struct lightComponents {
 class Material {
     private:
     lightComponents m_Light;
-    glm::vec3 m_Color;
+    glm::vec4 m_Color;
 
     public:
-    inline Material() : m_Light(), m_Color ( glm::vec3 ( 1.0f, 1.0f, 1.0f ) ){};
-    inline Material ( glm::vec3 color, glm::vec4 lightComponents ) : m_Light ( {lightComponents.x, lightComponents.y, lightComponents.z, lightComponents.w} ), m_Color ( color ){};
+    inline Material() : m_Light(), m_Color ( glm::vec4 ( 1.0f, 1.0f, 1.0f, 1.0f ) ){};
+    inline Material ( glm::vec4 color, glm::vec4 lightComponents ) : m_Light ( {lightComponents.x, lightComponents.y, lightComponents.z, lightComponents.w} ), m_Color ( color ){};
 	inline glm::vec4 getComponents(){
 		return m_Light.asVector();
 	}
-	inline glm::vec3 getColor(){
+	inline glm::vec4 getColor(){
 		return m_Color;
 	}
 };
