@@ -28,6 +28,8 @@
 
 #include "geometry/Cube.h"
 #include "geometry/Square.h"
+#include "geometry/ObjMesh.h"
+
 
 #include "rendering/Camera.h"
 #include "rendering/renderer.h"
@@ -38,6 +40,8 @@
 #include "Shader.h"
 #include "texture.h"
 #include "vertexarray.h"
+
+
 
 Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned int count, ...) {
 	va_list args;
@@ -164,6 +168,20 @@ int main(int argc, char* argv[]) {
 		lightShader->Unbind();
 
 
+		VertexArray fishVA;
+		Geometry* fish = new ObjMesh("resources/Obj/fish.obj");
+		ComplexVertexBuffer fishVB = fish->bufferFactory();
+		fishVA.addBuffer(fishVB, fish->bufferLayoutFactory());
+		lightShader->Bind();
+		RenderedObject fishR(fishVA, fish, defaultMat, cubeTexture, root, lightShader);
+		fishVB.Unbind();
+		lightShader->Unbind();
+
+
+
+
+
+
 		std::stack<glm::mat4> matrices;
 		float currentTime = 0.0f;
 
@@ -174,6 +192,10 @@ int main(int argc, char* argv[]) {
 
 		box.Move(glm::vec3(-5, 5, -10));
 		box.SetScale(scaling);
+
+
+		fishR.Move(glm::vec3(-2, 5, -10));
+		fishR.SetScale(scaling);
 
 		bool isOpened = true;
 		//Main application loop
