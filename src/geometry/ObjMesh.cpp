@@ -169,38 +169,5 @@ ObjMesh::ObjMesh(const char * path) : Geometry()
 		j++;
 	}
 
-	/*
-	if (std::string(path) == "../../obj/plan.obj") {
-
-
-	std::cout << "vertices" << std::endl;
-	for (int i = 0; i < o_vertices.size(); i++) {
-	std::cout << o_vertices[i].x << std::endl;
-	std::cout << o_vertices[i].y << std::endl;
-	std::cout << o_vertices[i].z << std::endl;
-	std::cout << std::endl;
-	}
-
-	std::cout << "normals" << std::endl;
-	for (int i = 0; i < o_normals.size(); i++) {
-	std::cout << o_normals[i].x << std::endl;
-	std::cout << o_normals[i].y << std::endl;
-	std::cout << o_normals[i].z << std::endl;
-	std::cout << std::endl;
-	}
-
-	std::cout << "uvs" << std::endl;
-	for (int i = 0; i < o_uvs.size(); i++) {
-	std::cout << o_uvs[i].x << std::endl;
-	std::cout << o_uvs[i].y << std::endl;
-	std::cout << std::endl;
-	}
-
-	}
-	*/
-
-	//printf("\n Ouverture de fichier termine \n");
-	//printf("Nous avons : %d nb Vertices", getNbVertices());
-
-
+	std::cout << "Loaded " << o_vertices.size() << " vertices " << std::endl;
 }

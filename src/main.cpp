@@ -30,7 +30,6 @@
 #include "geometry/Square.h"
 #include "geometry/ObjMesh.h"
 
-
 #include "rendering/Camera.h"
 #include "rendering/renderer.h"
 #include "rendering/RenderedObject.h"
@@ -114,7 +113,7 @@ void drawPortailDelete(RenderedObject &intPortail, RenderedObject &portail, floa
 
 	std::stack<glm::mat4> matrices;
 	{
-		//TODO Comme les propriétées du portail n'est pas la meme mais ils héritent du meme objet il faudrait faire la multiplication a la main ici
+		//TODO Comme les propriÃ©tÃ©es du portail n'est pas la meme mais ils hÃ©ritent du meme objet il faudrait faire la multiplication a la main ici
 
 		glDisable(GL_STENCIL_TEST);
 
@@ -147,7 +146,7 @@ void drawPortail(RenderedObject &intPortail, RenderedObject &portail, float &cur
 
 	std::stack<glm::mat4> matrices;
 	{
-		//TODO Comme les propriétées du portail n'est pas la meme mais ils héritent du meme objet il faudrait faire la multiplication a la main ici
+		//TODO Comme les propriÃ©tÃ©es du portail n'est pas la meme mais ils hÃ©ritent du meme objet il faudrait faire la multiplication a la main ici
 
 		glDisable(GL_STENCIL_TEST);
 
@@ -681,12 +680,33 @@ int main(int argc, char* argv[]) {
 
 		
 
+		VertexArray cube2VA;
+		cubeVB.Bind();
+		cube2VA.addBuffer(cubeVB, cube->bufferLayoutFactory());
+		pointLightShader->Bind();
+		RenderedObject box2(cubeVA, cube, defaultMat, cubeTexture, root, pointLightShader);
+		cubeVB.Unbind();
+		lightShader->Unbind();
+
+		VertexArray fishVA;
+		Geometry* fish = new ObjMesh("resources/obj/fish.obj");
+		ComplexVertexBuffer fishVB = fish->bufferFactory();
+		fishVA.addBuffer(fishVB, fish->bufferLayoutFactory());
+		pointLightShader->Bind();
+		RenderedObject fishObj(fishVA, fish, defaultMat, cubeTexture, root, pointLightShader);
+
 
 		std::stack<glm::mat4> matrices;
 		float currentTime = 0.0f;
 
 		glm::vec3 scaling(5, 5, 5);
 
+
+		box2.Move(glm::vec3(5, 5, -10));
+		box2.SetScale(scaling);
+
+		fishObj.Move(glm::vec3(0, 5, -10));
+		fishObj.SetScale(scaling);
 
 		bool isOpened = true;
 		//Main application loop

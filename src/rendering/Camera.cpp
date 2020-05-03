@@ -91,6 +91,12 @@ void Camera::inputMove(const SDL_Event& event) {
 		case SDLK_RIGHT:
 			m_Position += glm::normalize(glm::cross(m_Front, m_Up)) * m_Speed;
 			break;
+		case SDLK_SPACE:
+			m_Position += m_Speed * m_Up;
+			break;
+		case SDLK_LESS:
+			m_Position -= m_Speed * m_Up;
+			break;
 		default:
 			std::cout << "[Camera Warning] Unhandeld key pressed " << event.key.keysym.sym << std::endl;
 			break;
