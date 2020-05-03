@@ -39,19 +39,13 @@
 #include "texture.h"
 #include "vertexarray.h"
 
-#define _2D 2
-#define _3D 3
-#define COL_CHANNELS 3 // components to defien one color (rgb = 3, rgba = 4, ...)
-#define TEX_CHANNELS 2 // dimension of textures coordinates
-#define VP_TRIANGLE 3 // Vertices per triangle
-
 Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned int count, ...) {
 	va_list args;
 	va_start(args, count);
 	FILE* fragmentShader = fopen(fragmentPath, "r");
 	FILE* vertexShader = fopen(vertexPath, "r");
 	if(!fragmentShader || !vertexShader) {
-		std::cerr << "Error opening shader files (probably not found)" << std::endl;
+		std::cerr << "[File Error] can't open shader" << std::endl;
 		//exit(1);
 	}
 
@@ -64,7 +58,7 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 // 		"#version 330 core\nlayout(location = 0) out vec4 color;\nvoid main(){color = vec4(1.0, 0.0, 0.0, 1.0);}");
 
 	if (shader == 0 || shader == nullptr) {
-		std::cerr << "Shader null" << std::endl;
+		std::cerr << "[Shader Error] NULL" << std::endl;
 		//exit(EXIT_FAILURE);
 	}
 	return shader;
@@ -126,70 +120,44 @@ int main(int argc, char* argv[]) {
 		RenderedObject root;
 		Camera camera;
 
-		glm::vec3 matColor(1.0f, 1.0f, 1.0f);
+		glm::vec4 matColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
 		Material defaultMat(matColor, propert);
 
 		glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-		glm::vec3 lightPos(0.0f, 1.0f, 0.0f);
+		glm::vec4 lightPos(0.0f, 1.0f, 0.0f, 1.0f);
 		Light sun = Light(lightPos, lightColor);
 
 		auto defaultShader = setupShaders("resources/Shaders/Tex.vert", "resources/Shaders/Tex.frag", 2, "v_Position", "v_UV");
 
 		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag", 3, "v_Position", "v_UV", "v_Normal");
 
-		// TODO color * texture in shader
-		// shader->SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-
 		Texture texture("resources/img/NonoreveLogo.png");
 		Texture cubeTexture("resources/img/grass.png");
-		//shader->SetUniform1i("u_Texture", 0);
 
-
-// 		const unsigned int VERTICES = 4;
-		const unsigned int TRIANGLES = 2;
-		const unsigned int POS_DIM = _2D; // either 2D or 3D
-		const unsigned int BUF_COMPONENTS = 3; // number of arrays
-		const unsigned int sizeOfFloat = static_cast<unsigned int>(sizeof(float));
-
+		
 		// TODO include in geometry
-		unsigned int indices[] = {
-			0, 1, 2,
-			2, 3, 0
-		};
-		//IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
+// 		const unsigned int VERTICES = 4;
+// 		const unsigned int TRIANGLES = 2;
+// 		unsigned int indices[] = {
+// 			0, 1, 2,
+// 			2, 3, 0
+// 		};
+// 		IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
 
 		VertexArray squareVA;
 		Geometry* square = new Square();
-		SubData squarePosData = {square->getNbVertices()* POS_DIM * sizeOfFloat, square->getVertices()};
-		SubData squareTexData = {square->getNbVertices()* TEX_CHANNELS * sizeOfFloat, square->getUVs()};
-		SubData squareNormData = {square->getNbVertices() * 3 * sizeOfFloat, square->getNormals()};
-		ComplexVertexBuffer squareVB(square->getNbVertices() * (POS_DIM + TEX_CHANNELS + 3) * sizeof(float), square->getNbVertices(), BUF_COMPONENTS, squarePosData, squareTexData, squareNormData);
-
-		VertexBufferLayout squareLayout;
-		squareLayout.Push(POS_DIM,GL_FLOAT);
-		squareLayout.Push(TEX_CHANNELS, GL_FLOAT);
-		squareLayout.Push(3, GL_FLOAT);
-		squareVA.addBuffer(squareVB, squareLayout);
+		ComplexVertexBuffer squareVB = square->bufferFactory();
+		squareVA.addBuffer(squareVB, square->bufferLayoutFactory());
 		defaultShader->Bind();
 		RenderedObject texSquare(squareVA, square, defaultMat, texture, root, defaultShader);
 		squareVB.Unbind();
 		defaultShader->Unbind();
 
-
 		VertexArray cubeVA;
 		Geometry* cube = new Cube();
-		const unsigned int vertices = cube->getNbVertices();
-		SubData posData = {vertices* _3D * sizeOfFloat, cube->getVertices()};
-		SubData texData = {vertices* TEX_CHANNELS * sizeOfFloat, cube->getUVs()};
-		SubData normalsData = {vertices* _3D * sizeOfFloat, cube->getNormals()};
-		ComplexVertexBuffer cubeVB(vertices * (_3D + _3D + TEX_CHANNELS) * sizeof(float), vertices, 3, posData, texData, normalsData);
-
-		VertexBufferLayout cubeLayout;
-		cubeLayout.Push(_3D, GL_FLOAT);
-		cubeLayout.Push(TEX_CHANNELS, GL_FLOAT);
-		cubeLayout.Push(_3D, GL_FLOAT);
-		cubeVA.addBuffer(cubeVB, cubeLayout);
+		ComplexVertexBuffer cubeVB = cube->bufferFactory();
+		cubeVA.addBuffer(cubeVB, cube->bufferLayoutFactory());
 		lightShader->Bind();
 		RenderedObject box(cubeVA, cube, defaultMat, cubeTexture, root, lightShader);
 		cubeVB.Unbind();

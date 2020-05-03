@@ -20,7 +20,7 @@
 
 Animation::Animation(float startTime, float endTime, AnimAction* action) {
 	if(startTime > endTime) {
-		std::cerr << "le temps de debut doit etre avant celui de fin ..." << std::endl;
+		std::cerr << "[Animation Error] Begining time must be before ending time" << std::endl;
 		return;
 	}
 	m_StartTime = startTime;

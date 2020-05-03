@@ -25,11 +25,11 @@
  */
 class ComplexVertexBuffer : public VertexBuffer {
 public :
-	ComplexVertexBuffer(unsigned int size, unsigned int elements, int count, ...);
+	ComplexVertexBuffer(unsigned int elements, int count, ...);
 };
 
 struct SubData{
-	unsigned int size;
+	unsigned int sizePerVertex;
 	const void* data;
 };
 #endif // COMPLEXVERTEXBUFFER_H

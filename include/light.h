@@ -5,9 +5,9 @@
 
 class Light {
 	public :
-		glm::vec3 m_Position;
+		glm::vec4 m_Position;
 		glm::vec3 m_Color;
-		inline Light(glm::vec3 position, glm::vec3 color) : m_Position(position), m_Color(color) {}
+		inline Light(glm::vec4 position, glm::vec3 color) : m_Position(position), m_Color(color) {}
 
 };
 
