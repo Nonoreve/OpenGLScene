@@ -68,6 +68,39 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 	return shader;
 }
 
+void drawPortailDelete(RenderedObject &intPortail, RenderedObject &portail, float &currentTime, Camera &camera, Light &sun) {
+
+	std::stack<glm::mat4> matrices;
+	{
+		//TODO Comme les propriétées du portail n'est pas la meme mais ils héritent du meme objet il faudrait faire la multiplication a la main ici
+
+		glDisable(GL_STENCIL_TEST);
+
+		portail.AfficherRecursif(matrices, currentTime, camera, sun);
+	}
+	{
+		matrices = std::stack<glm::mat4>();
+
+		glEnable(GL_STENCIL_TEST);
+
+		// Draw floor
+		glStencilFunc(GL_ALWAYS, 2, 0xFF); // Set any stencil to 1
+
+		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+		glStencilMask(0xFF); // Write to stencil buffer
+
+		glDepthMask(GL_FALSE); // Don't write to depth buffer
+
+		glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
+
+		intPortail.AfficherRecursif(matrices, currentTime, camera, sun);
+
+		glDepthMask(GL_TRUE); // write to depth buffer
+
+	}
+}
+
 void drawPortail(RenderedObject &intPortail, RenderedObject &portail, float &currentTime, Camera &camera, Light &sun) {
 
 	std::stack<glm::mat4> matrices;
@@ -83,13 +116,10 @@ void drawPortail(RenderedObject &intPortail, RenderedObject &portail, float &cur
 
 		glEnable(GL_STENCIL_TEST);
 
-		/*
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LESS);
-		*/
-
 		// Draw floor
 		glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+
+
 
 		glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
@@ -101,7 +131,7 @@ void drawPortail(RenderedObject &intPortail, RenderedObject &portail, float &cur
 
 		intPortail.AfficherRecursif(matrices, currentTime, camera, sun);
 
-		glDepthMask(GL_TRUE); // Don't write to depth buffer
+		glDepthMask(GL_TRUE); // write to depth buffer
 
 	}
 }
@@ -109,7 +139,33 @@ void drawPortail(RenderedObject &intPortail, RenderedObject &portail, float &cur
 void drawCurrentWorld(RenderedObject &r, float &currentTime, Camera &camera, Light &sun) {
 	std::stack<glm::mat4> matrices;
 
+	//-------- Affichage normal
+	/*
 	glDisable(GL_STENCIL_TEST);
+
+	glEnable(GL_DEPTH_TEST);//Attention si il y a une erreur il faut penser a le changer
+
+	glDepthMask(GL_TRUE); // Write to depth buffer
+
+	glStencilMask(0x00); // Don't write anything to stencil buffer
+
+	glEnable(GL_DEPTH_TEST);//Attention si il y a une erreur il faut penser a le changer
+
+	glDepthMask(GL_TRUE); // Write to depth buffer
+	*/
+
+	//----Suppression image derriere
+
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 2, 0xFF); // Pass test if stencil value is 1
+
+
+	glStencilMask(0x00); // Don't write anything to stencil buffer
+
+	glEnable(GL_DEPTH_TEST);//Attention si il y a une erreur il faut penser a le changer
+
+	glDepthMask(GL_TRUE); // Write to depth buffer
+
 
 	r.AfficherRecursif(matrices, currentTime, camera, sun);
 
@@ -121,7 +177,7 @@ void drawOtherWorld(RenderedObject &r, float &currentTime, Camera &camera, Light
 
 	std::stack<glm::mat4> matrices;
 
-
+	glEnable(GL_STENCIL_TEST);
 	// Draw
 	glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
 
@@ -129,9 +185,6 @@ void drawOtherWorld(RenderedObject &r, float &currentTime, Camera &camera, Light
 	glStencilMask(0x00); // Don't write anything to stencil buffer
 
 	glEnable(GL_DEPTH_TEST);//Attention si il y a une erreur il faut penser a le changer
-
-
-							//Attention peut mal fonctionner avec le fog
 
 	glDepthMask(GL_TRUE); // Write to depth buffer
 
@@ -215,7 +268,7 @@ int main(int argc, char* argv[]) {
 		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencilBits);
 		std::cout << "stencil bit size (cense etre a 8) : " << stencilBits << std::endl;
 
-		bool isWorldIle = true;
+		bool isWorldIle = false;
 		bool isWireframe = false;
 
 		Renderer renderer;
@@ -241,6 +294,8 @@ int main(int argc, char* argv[]) {
 		Texture papillonTexture("resources/img/papillon.png");
 		Texture fondTexture("resources/img/fond.png");
 		Texture portailTexture("resources/img/portail.png");
+
+		Texture troncTexture("resources/img/tronc.png");
 
 		// TODO include in geometry
 		// 		const unsigned int VERTICES = 4;
@@ -358,7 +413,7 @@ int main(int argc, char* argv[]) {
 		Geometry* troncG = new ObjMesh("resources/Obj/tronc.obj");
 		ComplexVertexBuffer troncVB = troncG->bufferFactory();
 		troncVA.addBuffer(troncVB, troncG->bufferLayoutFactory());
-		RenderedObject Tronc(troncVA, troncG, defaultMat, emptyTexture, Ile, defaultShader); 
+		RenderedObject Tronc(troncVA, troncG, defaultMat, troncTexture, Ile, defaultShader); 
 		{
 			Tronc.Move(glm::vec3(-3.0f, 0.0f, 3.0f));
 		
@@ -458,10 +513,19 @@ int main(int argc, char* argv[]) {
 
 			renderer.Clear();
 			currentTime += TIME_PER_FRAME_MS;
-
-			drawCurrentWorld(PARENT_ILE, currentTime, camera, sun);
-			drawPortail(IntPortail, Portail, currentTime, camera, sun);
-			drawOtherWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
+			
+			if (isWorldIle) {
+				drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
+				drawCurrentWorld(PARENT_ILE, currentTime, camera, sun);
+				drawPortail(IntPortail, Portail, currentTime, camera, sun);
+				drawOtherWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
+			}
+			else {
+				drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
+				drawCurrentWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
+				drawPortail(IntPortail, Portail, currentTime, camera, sun);
+				drawOtherWorld(PARENT_ILE, currentTime, camera, sun);
+			}
 
 			/*
 			PARENT_ILE.AfficherRecursif(matrices, currentTime, camera, sun);
