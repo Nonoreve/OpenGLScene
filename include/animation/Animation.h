@@ -23,10 +23,12 @@ class Animation {
 	private:
 		float m_StartTime;
 		float m_EndTime;
+		float m_ReloadTime = 0;
 		AnimAction* m_Action;
 
 	public:
 		Animation(float startTime, float endTime, AnimAction* action);
+		Animation(float startTime, float endTime, float reloadTime, AnimAction* action);
 		bool CheckAnimation(glm::mat4 &matModif, float currentTime);
 
 };
