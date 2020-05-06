@@ -210,6 +210,31 @@ void DesactiverWireframe() {
 	glCullFace(GL_BACK);
 }
 
+void ActiverFog(glm::vec3 fogColor) {
+	//------Fog
+	glClearColor(fogColor.x, fogColor.y, fogColor.z, 1.0f);
+
+	glClearDepth(1);
+
+	glEnable(GL_DEPTH_TEST);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // don't forget to clear the stencil buffer!
+
+
+
+	glEnable(GL_FOG);
+	GLfloat fogcolor[4] = { 0.5, 0.5, 0.5, 1 };
+	GLint fogmode = GL_EXP;
+	glFogi(GL_FOG_MODE, fogmode);
+	glFogfv(GL_FOG_COLOR, fogcolor);
+	glFogf(GL_FOG_DENSITY, 0.35);
+	glFogf(GL_FOG_START, 1);
+	glFogf(GL_FOG_END, 5);
+	//----------/Fog
+
+
+}
+
 int main(int argc, char* argv[]) {
 	////////////////////////////////////////
 	//SDL2 / OpenGL Context initialization :
@@ -271,6 +296,8 @@ int main(int argc, char* argv[]) {
 		bool isWorldIle = false;
 		bool isWireframe = false;
 
+		glm::vec3 fogColor(0.4, 0.5, 0.9);
+
 		Renderer renderer;
 		RenderedObject root;
 		Camera camera;
@@ -287,6 +314,7 @@ int main(int argc, char* argv[]) {
 
 		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag", 3, "v_Position", "v_UV", "v_Normal");
 
+		auto underwaterShader = setupShaders("resources/Shaders/UnderWater.vert", "resources/Shaders/UnderWater.frag", 3, "v_Position", "v_UV", "v_Normal");
 
 		Texture emptyTexture("resources/img/.png");
 		Texture skyboxTexture("resources/img/skybox.png");
@@ -296,6 +324,9 @@ int main(int argc, char* argv[]) {
 		Texture portailTexture("resources/img/portail.png");
 
 		Texture troncTexture("resources/img/tronc.png");
+
+		Texture oiseauBodyTexture("resources/img/oiseauCorp.png");
+		Texture oiseauAileTexture("resources/img/oiseauAile.png");
 
 		// TODO include in geometry
 		// 		const unsigned int VERTICES = 4;
@@ -339,8 +370,57 @@ int main(int argc, char* argv[]) {
 		defaultShader->Unbind();
 		*/
 
+
+		//---------------------------- Sous Marin ------------------------------------
+
+
+
+		RenderedObject PARENT_SOUS_MARIN(root);
+
+		underwaterShader->Bind();
+
+		VertexArray fondVA;
+		Geometry* fondG = new ObjMesh("resources/Obj/fond.obj");
+		ComplexVertexBuffer fondVB = fondG->bufferFactory();
+		fondVA.addBuffer(fondVB, fondG->bufferLayoutFactory());
+		RenderedObject Fond(fondVA, fondG, defaultMat, fondTexture, PARENT_SOUS_MARIN, underwaterShader);
+		{
+			Fond.SetScale(glm::vec3(0.5f, 0.3f, 0.5f));
+			Fond.Move(glm::vec3(-15.0f, 4.0f, -10.0f));
+		}
+
+		RenderedObject Parent_Oiseau(PARENT_SOUS_MARIN);
+
+		VertexArray oiseauCorpVA;
+		Geometry* oiseauCorpG = new ObjMesh("resources/Obj/oiseauCorp.obj");
+		ComplexVertexBuffer oiseauCorpVB = oiseauCorpG->bufferFactory();
+		oiseauCorpVA.addBuffer(oiseauCorpVB, oiseauCorpG->bufferLayoutFactory());
+		RenderedObject OiseauCorp(oiseauCorpVA, oiseauCorpG, defaultMat, oiseauBodyTexture, Parent_Oiseau, underwaterShader);
+
+
+
+
+		VertexArray oiseauAileVA;
+		Geometry* oiseauAileG = new ObjMesh("resources/Obj/oiseauAile.obj");
+		ComplexVertexBuffer oiseauAileVB = oiseauAileG->bufferFactory();
+		oiseauAileVA.addBuffer(oiseauAileVB, oiseauAileG->bufferLayoutFactory());
+		RenderedObject OiseauAile1(oiseauAileVA, oiseauAileG, defaultMat, oiseauAileTexture, Parent_Oiseau, underwaterShader);
+		{
+			OiseauAile1.AddAnimation(new Animation(0.0f, 1000.0f, 1100, new AnimRotateAction(glm::vec3(1.0f, 0.0f, 0.0f), -0.6f)));
+			OiseauAile1.AddAnimation(new Animation(1000.0f, 2000.0f, 1100, new AnimRotateAction(glm::vec3(1.0f, 0.0f, 0.0f), 0.6f)));
+		}
+		RenderedObject OiseauAile2(oiseauAileVA, oiseauAileG, defaultMat, oiseauAileTexture, Parent_Oiseau, underwaterShader);
+		{
+			OiseauAile2.SetScale(glm::vec3(1.0f, 1.0f, -1.0f));
+			OiseauAile2.AddAnimation(new Animation(0.0f, 1000.0f, 1100, new AnimRotateAction(glm::vec3(1.0f, 0.0f, 0.0f), -0.6f)));
+			OiseauAile2.AddAnimation(new Animation(1000.0f, 2000.0f, 1100, new AnimRotateAction(glm::vec3(1.0f, 0.0f, 0.0f), 0.6f)));
+		}
+
+		underwaterShader->Unbind();
+
 		defaultShader->Bind();
 
+		//--------------------------------- Portail -------------------------------
 
 		RenderedObject PARENT_PORTAIL(root);
 		VertexArray portailVA;
@@ -359,18 +439,7 @@ int main(int argc, char* argv[]) {
 		Portail.Rotate(90, glm::vec3(1, 0, 0));
 
 
-		RenderedObject PARENT_SOUS_MARIN(root);
-		VertexArray fondVA;
-		Geometry* fondG = new ObjMesh("resources/Obj/fond.obj");
-		ComplexVertexBuffer fondVB = fondG->bufferFactory();
-		fondVA.addBuffer(fondVB, fondG->bufferLayoutFactory());
-		RenderedObject Fond(fondVA, fondG, defaultMat, fondTexture, PARENT_SOUS_MARIN, defaultShader);
-		{
-			Fond.SetScale(glm::vec3(0.5f, 0.3f, 0.5f));
-			Fond.Move(glm::vec3(-15.0f, 4.0f, -10.0f));
-		}
-
-
+		//------------------------------- Ile ---------------------------------
 
 		RenderedObject PARENT_ILE(root);
 		RenderedObject ParentPapillon(PARENT_ILE); {
@@ -513,18 +582,21 @@ int main(int argc, char* argv[]) {
 
 			renderer.Clear();
 			currentTime += TIME_PER_FRAME_MS;
-			
+
+			//A mettre dans le else de isWorldIle
+			ActiverFog(fogColor);
+
 			if (isWorldIle) {
-				drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
+				//drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
 				drawCurrentWorld(PARENT_ILE, currentTime, camera, sun);
 				drawPortail(IntPortail, Portail, currentTime, camera, sun);
 				drawOtherWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
 			}
 			else {
-				drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
+				//drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
 				drawCurrentWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
-				drawPortail(IntPortail, Portail, currentTime, camera, sun);
-				drawOtherWorld(PARENT_ILE, currentTime, camera, sun);
+				//drawPortail(IntPortail, Portail, currentTime, camera, sun);
+				//drawOtherWorld(PARENT_ILE, currentTime, camera, sun);
 			}
 
 			/*
