@@ -68,6 +68,48 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 	return shader;
 }
 
+//----------------Verification de Changement de Monde
+
+void ChangeWorld(bool &isZonePortail) {
+
+	isZonePortail = !isZonePortail;
+
+}
+
+bool isOnZonePortal(Camera &camera) {
+
+	const float maxDistx = 0.5f;
+	const float maxDisty = 0.5f;
+	const float maxDistz = 0.1f;
+	
+	glm::vec3 cameraPos = camera.getPosition();
+
+	//std::cout << "x : " << cameraPos.x << " y : " << cameraPos.y << "z : " << cameraPos.z << std::endl;
+
+	if (cameraPos.x > -maxDistx && cameraPos.x < maxDistx
+		&&cameraPos.y > -maxDisty && cameraPos.y < maxDisty
+		&&cameraPos.z > -maxDistz && cameraPos.z < maxDistz)
+		return true;
+	else
+		return false;
+	
+}
+
+void TestChangeWorld(Camera &camera, bool &isOnPortal, bool &isOnIle) {
+
+	if (!isOnPortal && isOnZonePortal(camera)) {
+		isOnPortal = true;
+		ChangeWorld(isOnIle);
+	}
+	else if (isOnPortal && !isOnZonePortal(camera)) {
+		isOnPortal = false;
+	}
+
+}
+
+
+//---------------------------Affichage effet Portail
+
 void drawPortailDelete(RenderedObject &intPortail, RenderedObject &portail, float &currentTime, Camera &camera, Light &sun) {
 
 	std::stack<glm::mat4> matrices;
@@ -293,14 +335,26 @@ int main(int argc, char* argv[]) {
 		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencilBits);
 		std::cout << "stencil bit size (cense etre a 8) : " << stencilBits << std::endl;
 
-		bool isWorldIle = false;
-		bool isWireframe = false;
+		float currParentRotation = 0.0f;
+		float currRotation = 0.0f;
+		float currPosition = 0.0f;
+		glm::mat4 originalPos;
 
-		glm::vec3 fogColor(0.4, 0.5, 0.9);
+		bool isInPortail = true;
+		bool isWorldIle = true;
+
+
+		bool isWireframe = false;
+		bool isCameraFree = false;
+
+		//glm::vec3 fogColor(0.4, 0.5, 0.9);
+
+		glm::vec3 fogColor(0.6, 0.7, 0.95);
 
 		Renderer renderer;
 		RenderedObject root;
 		Camera camera;
+
 
 		glm::vec4 matColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glm::vec4 propert(0.5f, 0.5f, 0.5f, 50.0f);
@@ -337,39 +391,21 @@ int main(int argc, char* argv[]) {
 		// 		};
 		// 		IndexBuffer ib(indices, TRIANGLES * VP_TRIANGLE);
 
-		/*
-		VertexArray squareVA;
-		Geometry* square = new Square();
-		ComplexVertexBuffer squareVB = square->bufferFactory();
-		squareVA.addBuffer(squareVB, square->bufferLayoutFactory());
-		defaultShader->Bind();
-		RenderedObject texSquare(squareVA, square, defaultMat, texture, root, defaultShader);
-		squareVB.Unbind();
-		defaultShader->Unbind();
 
-		VertexArray cubeVA;
-		Geometry* cube = new Cube();
-		ComplexVertexBuffer cubeVB = cube->bufferFactory();
-		cubeVA.addBuffer(cubeVB, cube->bufferLayoutFactory());
-		lightShader->Bind();
-		RenderedObject box(cubeVA, cube, defaultMat, cubeTexture, root, lightShader);
-		cubeVB.Unbind();
-		lightShader->Unbind();
 
-		*/
-		//fish
+		//---------------------------- Camera -----------------------
 
-		/*
-		VertexArray fishVA;
-		Geometry* fish = new ObjMesh("resources/Obj/fish.obj");
-		ComplexVertexBuffer fishVB = fish->bufferFactory();
-		fishVA.addBuffer(fishVB, fish->bufferLayoutFactory());
-		defaultShader->Bind();
-		RenderedObject fishR(fishVA, fish, defaultMat, fishTexture, root, defaultShader);
-		fishVB.Unbind();
-		defaultShader->Unbind();
-		*/
+		glm::mat4 cameraParent = glm::mat4(1.0f);
 
+		glm::mat4 cameraView = camera.getViewM();
+
+		cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, -12.0f));
+
+		currPosition = -12.0f;
+
+		cameraParent = glm::rotate(cameraParent, glm::radians(-10.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+
+		originalPos = cameraView;
 
 		//---------------------------- Sous Marin ------------------------------------
 
@@ -390,6 +426,11 @@ int main(int argc, char* argv[]) {
 		}
 
 		RenderedObject Parent_Oiseau(PARENT_SOUS_MARIN);
+		{
+			Parent_Oiseau.Move(glm::vec3(0.0f, 4.0f, 0.0f));
+			Parent_Oiseau.SetScale(glm::vec3(0.4f, 0.4f, 0.4f));
+		
+		}
 
 		VertexArray oiseauCorpVA;
 		Geometry* oiseauCorpG = new ObjMesh("resources/Obj/oiseauCorp.obj");
@@ -571,14 +612,70 @@ int main(int argc, char* argv[]) {
 							ActiverWireframe();
 						isWireframe = !isWireframe;
 						break;
+					case SDLK_f:
+						isCameraFree = !isCameraFree;
 					}
 				default:
 					camera.inputMove(event);
 				}
 			}
 
-			camera.UpdateView();
 
+
+			if (isCameraFree) {
+				camera.UpdateView();
+			}
+			else {
+				if (currParentRotation > 179.0f && currParentRotation < 181.0f) {
+					if (currPosition < 0.0f) {
+						cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 0.1f));
+
+						glm::mat4 finalView = cameraView * cameraParent;
+
+						camera.SetView(finalView);
+
+						currPosition += 0.1f;
+					}
+					else if (currPosition < 12.0f){
+						cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 0.1f));
+
+						glm::mat4 finalView = cameraView;
+
+						camera.SetView(finalView);
+
+						currPosition += 0.1f;
+						
+					}
+					else {
+
+						//Here do rotate to origin
+
+						cameraView = originalPos;
+
+						glm::mat4 finalView = cameraView * cameraParent;
+
+						camera.SetView(finalView);
+						
+						currPosition = -12;
+						currRotation = 0;
+						currParentRotation = 0;
+
+					}
+
+				}
+				else {
+
+					cameraParent = glm::rotate(cameraParent, glm::radians(0.5f), glm::vec3(0.0f, -1.0f, 0.0f));
+
+					glm::mat4 finalView = cameraView * cameraParent;
+
+					camera.SetView(finalView);
+
+					currParentRotation += 0.5f;
+				}
+			}
+
+			TestChangeWorld(camera, isInPortail, isWorldIle);
 
 			renderer.Clear();
 			currentTime += TIME_PER_FRAME_MS;
@@ -586,17 +683,18 @@ int main(int argc, char* argv[]) {
 			//A mettre dans le else de isWorldIle
 			ActiverFog(fogColor);
 
+
 			if (isWorldIle) {
-				//drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
+				drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
 				drawCurrentWorld(PARENT_ILE, currentTime, camera, sun);
 				drawPortail(IntPortail, Portail, currentTime, camera, sun);
 				drawOtherWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
 			}
 			else {
-				//drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
+				drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
 				drawCurrentWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
-				//drawPortail(IntPortail, Portail, currentTime, camera, sun);
-				//drawOtherWorld(PARENT_ILE, currentTime, camera, sun);
+				drawPortail(IntPortail, Portail, currentTime, camera, sun);
+				drawOtherWorld(PARENT_ILE, currentTime, camera, sun);
 			}
 
 			/*
