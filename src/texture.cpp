@@ -33,16 +33,10 @@ Texture::Texture(const std::string& path) : m_FilePath(path), m_LocalBuffer(null
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-
-	unsigned char* flippedImg = (unsigned char*)malloc(m_Width * m_Height * 4); // nbPixels * nbChannels * bytePerChannel(1)
-	const unsigned int SIZE_ROW = m_Width * 4;
-	for(int row = 0; row < m_Height; row++){
-		// copying an entire row
-		memcpy(flippedImg + (m_Height - row - 1) * SIZE_ROW, (unsigned char*)m_LocalBuffer->pixels + row * SIZE_ROW, SIZE_ROW);
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)flippedImg);
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+	
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*)m_LocalBuffer->pixels);
 
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 	if (m_LocalBuffer)

@@ -19,6 +19,22 @@
 #include <iostream>
 #include <algorithm>
 
+
+void Camera::SetView(glm::mat4 view)
+{
+	m_View = view;
+
+	//toVerif
+
+	m_Position = glm::vec3(view[3][0], view[3][1], view[3][2]);
+
+}
+
+void Camera::SetPosition(glm::vec3 pos)
+{
+	m_Position = pos;
+}
+
 void Camera::UpdateView() {
 	m_View = glm::lookAt(m_Position, m_Position + m_Front, m_Up);
 }
@@ -38,8 +54,11 @@ void Camera::UpdateAnimations(float currentTime) {
 }
 
 void Camera::Rotate(float angle, glm::vec3 position) {
-	if(glm::all(glm::equal(position, glm::vec3(0.0, 0.0, 0.0))))
+	if (glm::all(glm::equal(position, glm::vec3(0.0, 0.0, 0.0))))
+	{
+		std::cout << "can't rotate" << std::endl;
 		return; // TODO print error ?
+	}
 
 	m_View = glm::rotate(m_View, glm::radians(angle), position); // We rotate via an axis and an angle around this axis
 }
