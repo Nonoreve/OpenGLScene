@@ -57,6 +57,9 @@ class Camera {
 			//m_View(glm::lookAt(m_Position, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))) {}
 			m_View(glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0))) {}
 
+		void SetView(glm::mat4 view);
+
+		void SetPosition(glm::vec3 pos);
 		void UpdateView();
 		void UpdateAnimations(float currentTime);
 		

@@ -18,6 +18,7 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
+//Warning use millisecond as time
 Animation::Animation(float startTime, float endTime, AnimAction* action) {
 	if(startTime > endTime) {
 		std::cerr << "[Animation Error] Begining time must be before ending time" << std::endl;
@@ -28,6 +29,41 @@ Animation::Animation(float startTime, float endTime, AnimAction* action) {
 	m_Action = action;
 }
 
+Animation::Animation(float startTime, float endTime, float reloadTime, AnimAction * action)
+{
+	if (startTime > endTime) {
+		std::cerr << "[Animation Error] Begining time must be before ending time" << std::endl;
+		return;
+	}
+
+	m_ReloadTime = reloadTime;
+	m_StartTime = startTime;
+	m_EndTime = endTime;
+	m_Action = action;
+}
+
+//[!] non reload not retested after reload implement
+bool Animation::CheckAnimation(glm::mat4& matModif, float currentTime) {
+	if (currentTime > m_StartTime) {
+		if (currentTime < m_EndTime) {
+			//We execute the action
+			m_Action->Action(matModif);
+		}
+		else {
+			//End of animation, check for next frame
+			float diffTime = m_EndTime - m_StartTime;
+			m_StartTime = m_EndTime + m_ReloadTime;
+			m_EndTime = m_StartTime + diffTime;
+		}
+	}
+	//We delete the animation
+	else if (currentTime > m_EndTime) {
+		return false;
+	}
+	return true;
+}
+
+/*
 bool Animation::CheckAnimation(glm::mat4& matModif, float currentTime) {
 	if(currentTime > m_StartTime && currentTime < m_EndTime) {
 		m_Action->Action(matModif);
@@ -36,3 +72,4 @@ bool Animation::CheckAnimation(glm::mat4& matModif, float currentTime) {
 	}
 	return true;
 }
+*/
