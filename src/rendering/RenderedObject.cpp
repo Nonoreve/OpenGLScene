@@ -98,11 +98,18 @@ void RenderedObject::Afficher(std::stack<glm::mat4>& matrices, Camera camera, Li
 
 	glm::mat4 modelView = camera.getViewM() * matrices.top();
 
+	Geometry g = *m_Geometry;
+
+
 	m_VertexArray->Bind();
 	m_Texture->Bind();
 	m_Shader->Bind();
 	m_Shader->SetUniformMat4f("u_Projection", camera.getProjectionM());
 	m_Shader->SetUniformMat4f("u_ModelView", modelView);
+
+	m_Shader->SetUniformMat4f("u_Model", matrices.top());
+	m_Shader->SetUniformMat4f("u_View", camera.getViewM());
+
 	m_Shader->SetUniform1i("u_Texture", 0); // TEXTURE_SLOT
 	m_Shader->SetUniformVec4f("u_Color", m_Material->getColor());
 	m_Shader->SetUniformVec4f("u_K", m_Material->getComponents());
