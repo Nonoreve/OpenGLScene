@@ -376,7 +376,11 @@ int main(int argc, char* argv[]) {
 		Texture papillonTexture("resources/img/papillon.png");
 		Texture fondTexture("resources/img/fond.png");
 		Texture portailTexture("resources/img/portail.png");
-
+		Texture corpsBalaineTexture("resources/img/baleine/body.png");
+		Texture aileBalaine1Texture("resources/img/baleine/wing1.png");
+		Texture aileBalaine2Texture("resources/img/baleine/wing2.png");
+		Texture queue1BalaineTexture("resources/img/baleine/tail1.png");
+		Texture queue2BalaineTexture("resources/img/baleine/tail2.png");
 		Texture troncTexture("resources/img/tronc.png");
 
 		Texture oiseauBodyTexture("resources/img/oiseauCorp.png");
@@ -488,7 +492,6 @@ int main(int argc, char* argv[]) {
 		
 		}
 
-
 		//We can use the same AnimRotateAction for each papillon
 		VertexArray papillonVA;
 		Geometry* papillonG = new ObjMesh("resources/Obj/papillon.obj");
@@ -564,8 +567,69 @@ int main(int argc, char* argv[]) {
 			Rocher.Move(glm::vec3(3.5f, -0.25f, 0));
 		}
 		rocherVB.Unbind();
+		RenderedObject parentbalaine(PARENT_ILE);
+		{
+			parentbalaine.AddAnimation(new Animation(0.0f, 50.0f, 0, new AnimRotateAction(glm::vec3(0.0f, 1.0f, 0.0f), 1.0f)));
+		}
+		VertexArray baleineCorpVA;
+		Geometry* balaineCorpG = new ObjMesh("resources/Obj/baleine_corps.obj");
+		ComplexVertexBuffer balaineCorpVB = balaineCorpG->bufferFactory();
+		baleineCorpVA.addBuffer(balaineCorpVB, balaineCorpG->bufferLayoutFactory());
+		RenderedObject BalaineCorp(baleineCorpVA, balaineCorpG, defaultMat, corpsBalaineTexture , parentbalaine, defaultShader);
+		{
+			BalaineCorp.Move(glm::vec3(0.0f, 0.0f, -9.0f));
+			BalaineCorp.SetScale(glm::vec3(0.5f, 0.5f, 0.5f));
+		}
+		balaineCorpVB.Unbind();
+		VertexArray balaineAile1VA;
+		Geometry* balaineAile1G = new ObjMesh("resources/Obj/baleine_aile1.obj");
+		ComplexVertexBuffer balaineAile1VB = balaineAile1G->bufferFactory();
+		balaineAile1VA.addBuffer(balaineAile1VB, balaineAile1G->bufferLayoutFactory());
+		RenderedObject balaineAile1(balaineAile1VA, balaineAile1G, defaultMat, aileBalaine1Texture, BalaineCorp, defaultShader);
+		{
+			balaineAile1.Move(glm::vec3(-2.0f, -2.0f, 2.0f));
+			balaineAile1.AddAnimation(new Animation(0.0f, 450.0f, 450, new AnimRotateAction(glm::vec3(1.0f, 0.0f, 0.0f), 1.0f)));
+			balaineAile1.AddAnimation(new Animation(450.0f, 900.0f, 450, new AnimRotateAction(glm::vec3(1.0f, 0.0f, 0.0f), -1.0f)));
+		}
+		balaineAile1VB.Unbind();
 
-		//+ Baleine
+		VertexArray balaineAile2VA;
+		Geometry* balaineAile2G = new ObjMesh("resources/Obj/baleine_aile2.obj");
+		ComplexVertexBuffer balaineAile2VB = balaineAile2G->bufferFactory();
+		balaineAile2VA.addBuffer(balaineAile2VB, balaineAile2G->bufferLayoutFactory());
+		RenderedObject balaineAile2(balaineAile2VA, balaineAile2G, defaultMat, aileBalaine2Texture, BalaineCorp, defaultShader);
+		{
+			balaineAile2.Move(glm::vec3(-1.9f, -2.1f, -2.0f));
+			balaineAile2.AddAnimation(new Animation(0.0f, 450.0f, 450, new AnimRotateAction(glm::vec3(1.0f, 0.0f, 0.0f), -1.0f)));
+			balaineAile2.AddAnimation(new Animation(450.0f, 900.0f, 450, new AnimRotateAction(glm::vec3(1.0f, 0.0f, 0.0f), 1.0f)));
+		}
+		balaineAile2VB.Unbind();
+
+		VertexArray balaineQueue1VA;
+		Geometry* balaineQueue1G = new ObjMesh("resources/Obj/baleine_queue1.obj");
+		ComplexVertexBuffer balaineQueue1VB = balaineQueue1G->bufferFactory();
+		balaineQueue1VA.addBuffer(balaineQueue1VB, balaineQueue1G->bufferLayoutFactory());
+		RenderedObject balaineQueue1(balaineQueue1VA, balaineQueue1G, defaultMat, queue1BalaineTexture, BalaineCorp, defaultShader);
+		{
+			balaineQueue1.Move(glm::vec3(4.7f, 0.4f, 0.0f));
+			balaineQueue1.Rotate(20, glm::vec3(0.0f, 0.0f, 0.1f));
+			balaineQueue1.AddAnimation(new Animation(0.0f, 600.0f, 600, new AnimRotateAction(glm::vec3(0.0f, 0.0f, 1.0f), -1.0f)));
+			balaineQueue1.AddAnimation(new Animation(600.0f, 1200.0f, 600, new AnimRotateAction(glm::vec3(0.0f, 0.0f, 1.0f), 1.0f)));
+		}
+		balaineQueue1VB.Unbind();
+
+		VertexArray balaineQueue2VA;
+		Geometry* balaineQueue2G = new ObjMesh("resources/Obj/baleine_queue2.obj");
+		ComplexVertexBuffer balaineQueue2VB = balaineQueue2G->bufferFactory();
+		balaineQueue2VA.addBuffer(balaineQueue2VB, balaineQueue2G->bufferLayoutFactory());
+		RenderedObject balaineQueue2(balaineQueue2VA, balaineQueue2G, defaultMat, queue2BalaineTexture, balaineQueue1, defaultShader);
+		{
+			balaineQueue2.Move(glm::vec3(3.7f, 0.3f, 0.0f));
+			balaineQueue2.Rotate(20, glm::vec3(0.0f, 0.0f, 0.1f));
+			balaineQueue2.AddAnimation(new Animation(0.0f, 600.0f, 600, new AnimRotateAction(glm::vec3(0.0f, 0.0f, 1.0f), -1.0f)));
+			balaineQueue2.AddAnimation(new Animation(600.0f, 1200.0f, 600, new AnimRotateAction(glm::vec3(0.0f, 0.0f, 1.0f), 1.0f)));
+		}
+		balaineQueue2VB.Unbind();
 
 		VertexArray skyboxVA;
 		Geometry* skyboxG = new ObjMesh("resources/Obj/skybox.obj");
