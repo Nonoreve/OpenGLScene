@@ -374,17 +374,20 @@ int main(int argc, char* argv[]) {
 		Texture skyboxTexture("resources/img/skybox.png");
 		Texture ileTexture("resources/img/ile.png");
 		Texture papillonTexture("resources/img/papillon.png");
+		Texture rocherCorauxTexture("resources/img/rocher_coraux.png");
+		Texture algesCoraux("resources/img/alges_coraux.png");
 		Texture fondTexture("resources/img/fond.png");
 		Texture portailTexture("resources/img/portail.png");
+		Texture troncTexture("resources/img/tronc.png");
+
+		Texture oiseauBodyTexture("resources/img/oiseauCorp.png");
+		Texture oiseauAileTexture("resources/img/oiseauAile.png");
+
 		Texture corpsBalaineTexture("resources/img/baleine/body.png");
 		Texture aileBalaine1Texture("resources/img/baleine/wing1.png");
 		Texture aileBalaine2Texture("resources/img/baleine/wing2.png");
 		Texture queue1BalaineTexture("resources/img/baleine/tail1.png");
 		Texture queue2BalaineTexture("resources/img/baleine/tail2.png");
-		Texture troncTexture("resources/img/tronc.png");
-
-		Texture oiseauBodyTexture("resources/img/oiseauCorp.png");
-		Texture oiseauAileTexture("resources/img/oiseauAile.png");
 
 		// TODO include in geometry
 		// 		const unsigned int VERTICES = 4;
@@ -428,6 +431,41 @@ int main(int argc, char* argv[]) {
 			Fond.SetScale(glm::vec3(0.5f, 0.3f, 0.5f));
 			Fond.Move(glm::vec3(-15.0f, 4.0f, -10.0f));
 		}
+		VertexArray rocherCorauxVA;
+		Geometry* rocherCorauxG = new ObjMesh("resources/Obj/rock_coraux.obj");
+		ComplexVertexBuffer rocherCorauxVB = rocherCorauxG->bufferFactory();
+		rocherCorauxVA.addBuffer(rocherCorauxVB, rocherCorauxG->bufferLayoutFactory());
+		RenderedObject rocherCoraux(rocherCorauxVA, rocherCorauxG, defaultMat, rocherCorauxTexture, Fond, underwaterShader);
+		{
+			rocherCoraux.Move(glm::vec3(20.0f, -9.0f, 16.0f));
+			rocherCoraux.Rotate(-45, glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+		RenderedObject rocherCoraux2(rocherCorauxVA, rocherCorauxG, defaultMat, rocherCorauxTexture, Fond, underwaterShader);
+		{
+			rocherCoraux2.Move(glm::vec3(0.0f, -5.0f, 0.0f));
+			rocherCoraux.Rotate(12, glm::vec3(0.0f, 1.0f, 0.0f));
+		}
+
+		VertexArray jauneAlgesCorauxVA;
+		Geometry* jauneAlgesCorauxG = new ObjMesh("resources/Obj/jaunes_coraux.obj");
+		ComplexVertexBuffer jauneAlgesCorauxVB = jauneAlgesCorauxG->bufferFactory();
+		jauneAlgesCorauxVA.addBuffer(jauneAlgesCorauxVB, jauneAlgesCorauxG->bufferLayoutFactory());
+		RenderedObject jauneAlgesCoraux(jauneAlgesCorauxVA, jauneAlgesCorauxG, defaultMat, algesCoraux, rocherCoraux, underwaterShader);
+		RenderedObject jauneAlgesCoraux2(jauneAlgesCorauxVA, jauneAlgesCorauxG, defaultMat, algesCoraux, rocherCoraux2, underwaterShader);
+
+		VertexArray violetAlgesCoraux1VA;
+		Geometry* violetAlgesCoraux1G = new ObjMesh("resources/Obj/roses1_coraux.obj");
+		ComplexVertexBuffer violetAlgesCoraux1VB = violetAlgesCoraux1G->bufferFactory();
+		violetAlgesCoraux1VA.addBuffer(violetAlgesCoraux1VB, violetAlgesCoraux1G->bufferLayoutFactory());
+		RenderedObject violetAlgesCoraux1(violetAlgesCoraux1VA, violetAlgesCoraux1G, defaultMat, algesCoraux, rocherCoraux, underwaterShader);
+		RenderedObject violetAlgesCoraux12(violetAlgesCoraux1VA, violetAlgesCoraux1G, defaultMat, algesCoraux, rocherCoraux2, underwaterShader);
+
+		VertexArray violetAlgesCoraux2VA;
+		Geometry* violetAlgesCoraux2G = new ObjMesh("resources/Obj/roses2_coraux.obj");
+		ComplexVertexBuffer violetAlgesCoraux2VB = violetAlgesCoraux2G->bufferFactory();
+		violetAlgesCoraux2VA.addBuffer(violetAlgesCoraux2VB, violetAlgesCoraux2G->bufferLayoutFactory());
+		RenderedObject violetAlgesCoraux2(violetAlgesCoraux2VA, violetAlgesCoraux2G, defaultMat, algesCoraux, rocherCoraux, underwaterShader);
+		RenderedObject violetAlgesCoraux22(violetAlgesCoraux2VA, violetAlgesCoraux2G, defaultMat, algesCoraux, rocherCoraux2, underwaterShader);
 
 		RenderedObject Parent_Oiseau(PARENT_SOUS_MARIN);
 		{
@@ -478,7 +516,7 @@ int main(int argc, char* argv[]) {
 		Geometry* intPortailG = new ObjMesh("resources/Obj/intPortail.obj");
 		ComplexVertexBuffer intPortailVB = intPortailG->bufferFactory();
 		intPortailVA.addBuffer(intPortailVB, intPortailG->bufferLayoutFactory());
-		RenderedObject IntPortail(intPortailVA, intPortailG, defaultMat, emptyTexture, PARENT_PORTAIL, defaultShader);
+		RenderedObject IntPortail(intPortailVA, intPortailG, defaultMat, portailTexture, PARENT_PORTAIL, defaultShader);
 
 		IntPortail.Rotate(90, glm::vec3(1, 0, 0));
 		Portail.Rotate(90, glm::vec3(1, 0, 0));
