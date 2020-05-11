@@ -47,7 +47,7 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 	va_start(args, count);
 	FILE* fragmentShader = fopen(fragmentPath, "r");
 	FILE* vertexShader = fopen(vertexPath, "r");
-	if (!fragmentShader || !vertexShader) {
+	if(!fragmentShader || !vertexShader) {
 		std::cerr << "[File Error] can't open shader" << std::endl;
 		//exit(1);
 	}
@@ -60,7 +60,7 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 	// 		"#version 330 core\nlayout(location = 0) in vec4 position;\nvoid main(){gl_Position = position;}",
 	// 		"#version 330 core\nlayout(location = 0) out vec4 color;\nvoid main(){color = vec4(1.0, 0.0, 0.0, 1.0);}");
 
-	if (shader == 0 || shader == nullptr) {
+	if(shader == 0 || shader == nullptr) {
 		std::cerr << "[Shader Error] NULL" << std::endl;
 		//exit(EXIT_FAILURE);
 	}
@@ -69,38 +69,37 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 
 //----------------Verification de Changement de Monde
 
-void ChangeWorld(bool &isZonePortail) {
+void ChangeWorld(bool& isZonePortail) {
 
 	isZonePortail = !isZonePortail;
 
 }
 
-bool isOnZonePortal(Camera &camera) {
+bool isOnZonePortal(Camera& camera) {
 
 	const float maxDistx = 0.5f;
 	const float maxDisty = 0.5f;
 	const float maxDistz = 0.1f;
-	
+
 	glm::vec3 cameraPos = camera.getPosition();
 
 	//std::cout << "x : " << cameraPos.x << " y : " << cameraPos.y << "z : " << cameraPos.z << std::endl;
 
-	if (cameraPos.x > -maxDistx && cameraPos.x < maxDistx
-		&&cameraPos.y > -maxDisty && cameraPos.y < maxDisty
-		&&cameraPos.z > -maxDistz && cameraPos.z < maxDistz)
+	if(cameraPos.x > -maxDistx && cameraPos.x < maxDistx
+	        && cameraPos.y > -maxDisty && cameraPos.y < maxDisty
+	        && cameraPos.z > -maxDistz && cameraPos.z < maxDistz)
 		return true;
 	else
 		return false;
-	
+
 }
 
-void TestChangeWorld(Camera &camera, bool &isOnPortal, bool &isOnIle) {
+void TestChangeWorld(Camera& camera, bool& isOnPortal, bool& isOnIle) {
 
-	if (!isOnPortal && isOnZonePortal(camera)) {
+	if(!isOnPortal && isOnZonePortal(camera)) {
 		isOnPortal = true;
 		ChangeWorld(isOnIle);
-	}
-	else if (isOnPortal && !isOnZonePortal(camera)) {
+	} else if(isOnPortal && !isOnZonePortal(camera)) {
 		isOnPortal = false;
 	}
 
@@ -109,7 +108,7 @@ void TestChangeWorld(Camera &camera, bool &isOnPortal, bool &isOnIle) {
 
 //---------------------------Affichage effet Portail
 
-void drawPortailDelete(RenderedObject &intPortail, RenderedObject &portail, float &currentTime, Camera &camera, Light &sun) {
+void drawPortailDelete(RenderedObject& intPortail, RenderedObject& portail, float& currentTime, Camera& camera, Light& sun) {
 
 	std::stack<glm::mat4> matrices;
 	{
@@ -142,7 +141,7 @@ void drawPortailDelete(RenderedObject &intPortail, RenderedObject &portail, floa
 	}
 }
 
-void drawPortail(RenderedObject &intPortail, RenderedObject &portail, float &currentTime, Camera &camera, Light &sun) {
+void drawPortail(RenderedObject& intPortail, RenderedObject& portail, float& currentTime, Camera& camera, Light& sun) {
 
 	std::stack<glm::mat4> matrices;
 	{
@@ -177,7 +176,7 @@ void drawPortail(RenderedObject &intPortail, RenderedObject &portail, float &cur
 	}
 }
 
-void drawCurrentWorld(RenderedObject &r, float &currentTime, Camera &camera, Light &sun) {
+void drawCurrentWorld(RenderedObject& r, float& currentTime, Camera& camera, Light& sun, Texture* caustic = nullptr) {
 	std::stack<glm::mat4> matrices;
 
 	//-------- Affichage normal
@@ -208,12 +207,12 @@ void drawCurrentWorld(RenderedObject &r, float &currentTime, Camera &camera, Lig
 	glDepthMask(GL_TRUE); // Write to depth buffer
 
 
-	r.AfficherRecursif(matrices, currentTime, camera, sun);
+	r.AfficherRecursif(matrices, currentTime, camera, sun, caustic);
 
 }
 
 
-void drawOtherWorld(RenderedObject &r, float &currentTime, Camera &camera, Light &sun) {
+void drawOtherWorld(RenderedObject& r, float& currentTime, Camera& camera, Light& sun, Texture* caustic = nullptr) {
 
 
 	std::stack<glm::mat4> matrices;
@@ -229,7 +228,7 @@ void drawOtherWorld(RenderedObject &r, float &currentTime, Camera &camera, Light
 
 	glDepthMask(GL_TRUE); // Write to depth buffer
 
-	r.AfficherRecursif(matrices, currentTime, camera, sun);
+	r.AfficherRecursif(matrices, currentTime, camera, sun, caustic);
 
 }
 
@@ -282,13 +281,13 @@ int main(int argc, char* argv[]) {
 	////////////////////////////////////////
 
 	//Initialize SDL2
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+	if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		ERROR("The initialization of the SDL failed : %s\n", SDL_GetError());
 		return 0;
 	}
 
 	//init SDL_image
-	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+	if(!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
 		ERROR("Could not load SDL_image.\n");
 		return EXIT_FAILURE;
 	}
@@ -296,12 +295,12 @@ int main(int argc, char* argv[]) {
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	//Create a Window
 	SDL_Window* window = SDL_CreateWindow("OpenGL Scene",                           //Titre
-		SDL_WINDOWPOS_UNDEFINED,               //X Position
-		SDL_WINDOWPOS_UNDEFINED,               //Y Position
-		WIDTH, HEIGHT,                         //Resolution
-		SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN); //Flags (OpenGL + Show)
+	                                      SDL_WINDOWPOS_UNDEFINED,               //X Position
+	                                      SDL_WINDOWPOS_UNDEFINED,               //Y Position
+	                                      WIDTH, HEIGHT,                         //Resolution
+	                                      SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN); //Flags (OpenGL + Show)
 
-											   //Initialize OpenGL Version (default version 3.0)
+	//Initialize OpenGL Version (default version 3.0)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -321,7 +320,7 @@ int main(int argc, char* argv[]) {
 		//Start using OpenGL to draw something on screen
 		GLCall(glViewport(0, 0, WIDTH, HEIGHT)); //Draw on ALL the screen
 
-												 //The OpenGL background color (RGBA, each component between 0.0f and 1.0f)
+		//The OpenGL background color (RGBA, each component between 0.0f and 1.0f)
 		GLCall(glClearColor(0.3, 0.3, 0.3, 1.0)); //Gray
 
 		GLCall(glEnable(GL_DEPTH_TEST)); //Active the depth test
@@ -332,10 +331,9 @@ int main(int argc, char* argv[]) {
 
 		int stencilBits = -1;
 		glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_STENCIL, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE, &stencilBits);
-		std::cout << "stencil bit size (cense etre a 8) : " << stencilBits << std::endl;
+		std::cout << "stencil bit size (should be 8) : " << stencilBits << std::endl;
 
 		float currParentRotation = 0.0f;
-		float currRotation = 0.0f;
 		float currPosition = 0.0f;
 		glm::mat4 originalPos;
 
@@ -346,11 +344,9 @@ int main(int argc, char* argv[]) {
 		bool isWireframe = false;
 		bool isCameraFree = false;
 
-		//glm::vec3 fogColor(0.4, 0.5, 0.9);
-
 		glm::vec3 fogColor(0.6, 0.7, 0.95);
 
-		Renderer renderer;
+		Renderer renderer; // useless
 		RenderedObject root;
 		Camera camera;
 
@@ -368,6 +364,7 @@ int main(int argc, char* argv[]) {
 		auto lightShader = setupShaders("resources/Shaders/lightTex.vert", "resources/Shaders/lightTex.frag", 3, "v_Position", "v_UV", "v_Normal");
 
 		auto underwaterShader = setupShaders("resources/Shaders/UnderWater.vert", "resources/Shaders/UnderWater.frag", 3, "v_Position", "v_UV", "v_Normal");
+		auto causticWaterShader = setupShaders("resources/Shaders/UnderWater.vert", "resources/Shaders/CausticUnderWater.frag", 3, "v_Position", "v_UV", "v_Normal");
 
 		Texture emptyTexture("resources/img/.png");
 		Texture skyboxTexture("resources/img/skybox.png");
@@ -387,6 +384,25 @@ int main(int argc, char* argv[]) {
 		Texture aileBalaine2Texture("resources/img/baleine/wing2.png");
 		Texture queue1BalaineTexture("resources/img/baleine/tail1.png");
 		Texture queue2BalaineTexture("resources/img/baleine/tail2.png");
+
+		Texture* caustic[] = {
+			new Texture("resources/img/caus/save1.png"),
+			new Texture("resources/img/caus/save2.png"),
+			new Texture("resources/img/caus/save3.png"),
+			new Texture("resources/img/caus/save4.png"),
+			new Texture("resources/img/caus/save5.png"),
+			new Texture("resources/img/caus/save6.png"),
+			new Texture("resources/img/caus/save7.png"),
+			new Texture("resources/img/caus/save8.png"),
+			new Texture("resources/img/caus/save9.png"),
+			new Texture("resources/img/caus/save10.png"),
+			new Texture("resources/img/caus/save11.png"),
+			new Texture("resources/img/caus/save12.png"),
+			new Texture("resources/img/caus/save13.png"),
+			new Texture("resources/img/caus/save14.png"),
+			new Texture("resources/img/caus/save15.png"),
+			new Texture("resources/img/caus/save16.png"),
+		};
 
 		// TODO include in geometry
 		// 		const unsigned int VERTICES = 4;
@@ -425,7 +441,7 @@ int main(int argc, char* argv[]) {
 		Geometry* fondG = new ObjMesh("resources/Obj/fond.obj");
 		ComplexVertexBuffer fondVB = fondG->bufferFactory();
 		fondVA.addBuffer(fondVB, fondG->bufferLayoutFactory());
-		RenderedObject Fond(fondVA, fondG, defaultMat, fondTexture, PARENT_SOUS_MARIN, underwaterShader);
+		RenderedObject Fond(fondVA, fondG, defaultMat, fondTexture, PARENT_SOUS_MARIN, causticWaterShader);
 		{
 			Fond.SetScale(glm::vec3(0.5f, 0.3f, 0.5f));
 			Fond.Move(glm::vec3(-15.0f, 4.0f, -10.0f));
@@ -470,7 +486,7 @@ int main(int argc, char* argv[]) {
 		{
 			Parent_Oiseau.Move(glm::vec3(0.0f, 4.0f, 0.0f));
 			Parent_Oiseau.SetScale(glm::vec3(0.4f, 0.4f, 0.4f));
-		
+
 		}
 
 		VertexArray oiseauCorpVA;
@@ -526,7 +542,7 @@ int main(int argc, char* argv[]) {
 		RenderedObject PARENT_ILE(root);
 		RenderedObject ParentPapillon(PARENT_ILE); {
 			ParentPapillon.Move(glm::vec3(0.0f, 2.0f, 0.0f));
-		
+
 		}
 
 		//We can use the same AnimRotateAction for each papillon
@@ -563,10 +579,10 @@ int main(int argc, char* argv[]) {
 		Geometry* troncG = new ObjMesh("resources/Obj/tronc.obj");
 		ComplexVertexBuffer troncVB = troncG->bufferFactory();
 		troncVA.addBuffer(troncVB, troncG->bufferLayoutFactory());
-		RenderedObject Tronc(troncVA, troncG, defaultMat, troncTexture, Ile, defaultShader); 
+		RenderedObject Tronc(troncVA, troncG, defaultMat, troncTexture, Ile, defaultShader);
 		{
 			Tronc.Move(glm::vec3(-3.0f, 0.0f, 3.0f));
-		
+
 		}
 		troncVB.Unbind();
 
@@ -578,14 +594,14 @@ int main(int argc, char* argv[]) {
 		RenderedObject Feuille(feuilleVA, feuilleG, defaultMat, emptyTexture, Tronc, defaultShader);
 		{
 			Feuille.Move(glm::vec3(-5.5f, 12.7f, -2.4f));
-			Feuille.Rotate(-30.0f,glm::vec3( 1.0f, 0.0f, -1.0f));
+			Feuille.Rotate(-30.0f, glm::vec3(1.0f, 0.0f, -1.0f));
 
 		}
 		RenderedObject Feuille2(feuilleVA, feuilleG, defaultMat, emptyTexture, Tronc, defaultShader);
 		{
 			Feuille2.Move(glm::vec3(-0.8f, 13.0f, 0.0f));
-			Feuille2.Rotate(110.0f,glm::vec3( 0.0f, 1.0f, 0.0f));
-			Feuille2.Rotate(-30.0f,glm::vec3( 1.0f, 0.0f, -0.6f));
+			Feuille2.Rotate(110.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+			Feuille2.Rotate(-30.0f, glm::vec3(1.0f, 0.0f, -0.6f));
 		}
 		RenderedObject Feuille3(feuilleVA, feuilleG, defaultMat, emptyTexture, Tronc, defaultShader);
 		{
@@ -674,60 +690,38 @@ int main(int argc, char* argv[]) {
 		skyboxVA.addBuffer(skyboxVB, skyboxG->bufferLayoutFactory());
 		RenderedObject Skybox(skyboxVA, skyboxG, defaultMat, skyboxTexture, PARENT_ILE, defaultShader);
 		{
-			Skybox.Rotate(180.0f,glm::vec3( 0.0f, 1.0f, 0.0f));
+			Skybox.Rotate(180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 			Skybox.SetScale(glm::vec3(40.0f, 40.0f, 40.0f));
 		}
-
-		
-
-		VertexArray cube2VA;
-		cubeVB.Bind();
-		cube2VA.addBuffer(cubeVB, cube->bufferLayoutFactory());
-		pointLightShader->Bind();
-		RenderedObject box2(cubeVA, cube, defaultMat, cubeTexture, root, pointLightShader);
-		cubeVB.Unbind();
-		lightShader->Unbind();
-
-		VertexArray fishVA;
-		Geometry* fish = new ObjMesh("resources/obj/fish.obj");
-		ComplexVertexBuffer fishVB = fish->bufferFactory();
-		fishVA.addBuffer(fishVB, fish->bufferLayoutFactory());
-		pointLightShader->Bind();
-		RenderedObject fishObj(fishVA, fish, defaultMat, cubeTexture, root, pointLightShader);
 
 		std::stack<glm::mat4> matrices;
 		float currentTime = 0.0f;
 
 		glm::vec3 scaling(5, 5, 5);
-
-
-		box2.Move(glm::vec3(5, 5, -10));
-		box2.SetScale(scaling);
-
-		fishObj.Move(glm::vec3(0, 5, -10));
-		fishObj.SetScale(scaling);
+		int frame = 0;
+		int frameCount = 0;
 
 		bool isOpened = true;
 		//Main application loop
-		while (isOpened) {
+		while(isOpened) {
 			//Time in ms telling us when this frame started. Useful for keeping a fix framerate
 			uint32_t timeBegin = SDL_GetTicks();
 
 			//Fetch the SDL events
 			SDL_Event event;
-			while (SDL_PollEvent(&event)) {
-				switch (event.type) {
+			while(SDL_PollEvent(&event)) {
+				switch(event.type) {
 				case SDL_WINDOWEVENT:
-					switch (event.window.event) {
+					switch(event.window.event) {
 					case SDL_WINDOWEVENT_CLOSE:
 						isOpened = false;
 						break;
 					}
 					break;
 				case SDL_KEYDOWN:
-					switch (event.key.keysym.sym) {
+					switch(event.key.keysym.sym) {
 					case SDLK_t:
-						if (isWireframe)
+						if(isWireframe)
 							DesactiverWireframe();
 						else
 							ActiverWireframe();
@@ -743,12 +737,11 @@ int main(int argc, char* argv[]) {
 
 
 
-			if (isCameraFree) {
+			if(isCameraFree) {
 				camera.UpdateView();
-			}
-			else {
-				if (currParentRotation > 179.0f && currParentRotation < 181.0f) {
-					if (currPosition < 0.0f) {
+			} else {
+				if(currParentRotation > 179.0f && currParentRotation < 181.0f) {
+					if(currPosition < 0.0f) {
 						cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 0.1f));
 
 						glm::mat4 finalView = cameraView * cameraParent;
@@ -756,8 +749,7 @@ int main(int argc, char* argv[]) {
 						camera.SetView(finalView);
 
 						currPosition += 0.1f;
-					}
-					else if (currPosition < 12.0f){
+					} else if(currPosition < 12.0f) {
 						cameraView = glm::translate(cameraView, glm::vec3(0.0f, 0.0f, 0.1f));
 
 						glm::mat4 finalView = cameraView;
@@ -765,9 +757,8 @@ int main(int argc, char* argv[]) {
 						camera.SetView(finalView);
 
 						currPosition += 0.1f;
-						
-					}
-					else {
+
+					} else {
 
 						//Here do rotate to origin
 
@@ -776,15 +767,13 @@ int main(int argc, char* argv[]) {
 						glm::mat4 finalView = cameraView * cameraParent;
 
 						camera.SetView(finalView);
-						
+
 						currPosition = -12;
-						currRotation = 0;
 						currParentRotation = 0;
 
 					}
 
-				}
-				else {
+				} else {
 
 					cameraParent = glm::rotate(cameraParent, glm::radians(0.5f), glm::vec3(0.0f, -1.0f, 0.0f));
 
@@ -800,23 +789,23 @@ int main(int argc, char* argv[]) {
 
 			renderer.Clear();
 			currentTime += TIME_PER_FRAME_MS;
+			
+			frameCount++;
+			
+			if(frameCount % 2)
+				frame++;
+			if(frame >= 16)
+				frame = 0;
+			
+			std::cout << frameCount << ' ' << frame << std::endl;
 
 			//A mettre dans le else de isWorldIle
 			ActiverFog(fogColor);
 
-
-			if (isWorldIle) {
-				drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
-				drawCurrentWorld(PARENT_ILE, currentTime, camera, sun);
-				drawPortail(IntPortail, Portail, currentTime, camera, sun);
-				drawOtherWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
-			}
-			else {
-				drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
-				drawCurrentWorld(PARENT_SOUS_MARIN, currentTime, camera, sun);
-				drawPortail(IntPortail, Portail, currentTime, camera, sun);
-				drawOtherWorld(PARENT_ILE, currentTime, camera, sun);
-			}
+			drawPortailDelete(IntPortail, Portail, currentTime, camera, sun);
+			drawCurrentWorld(isWorldIle ? PARENT_ILE : PARENT_SOUS_MARIN, currentTime, camera, sun, caustic[frame]);
+			drawPortail(IntPortail, Portail, currentTime, camera, sun);
+			drawOtherWorld(isWorldIle ? PARENT_SOUS_MARIN : PARENT_ILE, currentTime, camera, sun, caustic[frame]);
 
 			/*
 			PARENT_ILE.AfficherRecursif(matrices, currentTime, camera, sun);
@@ -831,14 +820,14 @@ int main(int argc, char* argv[]) {
 			uint32_t timeEnd = SDL_GetTicks();
 
 			//We want FRAMERATE FPS
-			if (timeEnd - timeBegin < TIME_PER_FRAME_MS)
+			if(timeEnd - timeBegin < TIME_PER_FRAME_MS)
 				SDL_Delay(TIME_PER_FRAME_MS - (timeEnd - timeBegin));
 		}
 	} // inner scope to call all destructors before SDL_GL_DeleteContext
-	  //Free everything
-	if (context != NULL)
+	//Free everything
+	if(context != NULL)
 		SDL_GL_DeleteContext(context);
-	if (window != NULL)
+	if(window != NULL)
 		SDL_DestroyWindow(window);
 
 	return 0;
