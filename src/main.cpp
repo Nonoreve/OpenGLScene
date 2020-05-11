@@ -695,7 +695,6 @@ int main(int argc, char* argv[]) {
 		pointLightShader->Bind();
 		RenderedObject fishObj(fishVA, fish, defaultMat, cubeTexture, root, pointLightShader);
 
-
 		std::stack<glm::mat4> matrices;
 		float currentTime = 0.0f;
 
