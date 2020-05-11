@@ -516,7 +516,7 @@ int main(int argc, char* argv[]) {
 		Geometry* intPortailG = new ObjMesh("resources/Obj/intPortail.obj");
 		ComplexVertexBuffer intPortailVB = intPortailG->bufferFactory();
 		intPortailVA.addBuffer(intPortailVB, intPortailG->bufferLayoutFactory());
-		RenderedObject IntPortail(intPortailVA, intPortailG, defaultMat, emptyTexture, PARENT_PORTAIL, defaultShader);
+		RenderedObject IntPortail(intPortailVA, intPortailG, defaultMat, portailTexture, PARENT_PORTAIL, defaultShader);
 
 		IntPortail.Rotate(90, glm::vec3(1, 0, 0));
 		Portail.Rotate(90, glm::vec3(1, 0, 0));
