@@ -44,7 +44,7 @@ class Camera {
 		// TODO add some kind of inheritance with camera and RenderedObject (SceneObject ?)
 		// TODO adapt values, add them as parameters
 		inline Camera() :
-			m_Speed(0.1f),
+			m_Speed(0.2f),
 			m_Front(glm::vec3(0.0f, 0.0f, -1.0f)),
 			m_Up(glm::vec3(0.0f, 1.0f, 0.0f)),
 			m_Position(glm::vec3(0.0f, 0.0f, 0.0f)),

@@ -65,8 +65,8 @@ class RenderedObject {
 		void Rotate(float angle, glm::vec3 position);
 		void SetParent(RenderedObject& obj);
 		void ChangeGeometry(Geometry* geometry); // TODO remove ???
-		void AfficherRecursif(std::stack<glm::mat4>& matrices, float currentTime, Camera camera, Light sun);
-		void Afficher(std::stack<glm::mat4>& matrices, Camera camera, Light sun);
+		void AfficherRecursif(std::stack<glm::mat4>& matrices, float currentTime, Camera camera, Light sun, Texture* caustic = nullptr);
+		void Afficher(std::stack<glm::mat4>& matrices, Camera camera, Light sun, Texture* caustic = nullptr);
 
 };
 

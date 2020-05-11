@@ -22,10 +22,10 @@ void main() {
 	gl_Position = finalPos;
 	
 	float distance = length(finalPos.xyz);
-    //visibility = exp(-pow((distance*density),gradient));//Calcul plus réaliste mais moin beau
+    visibility = exp(-pow((distance*density),gradient));//Calcul plus réaliste mais moin beau
    
-    visibility = exp(-distance*density);
-    visibility = clamp (visibility,0.0,1.0);
+    //visibility = exp(-distance * density);
+    visibility = clamp (visibility, 0.0, 1.0);
 	
 }
 
