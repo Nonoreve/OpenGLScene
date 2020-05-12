@@ -17,6 +17,11 @@ uniform vec4 u_Color;
 
 uniform vec4 u_K;
 
+//devrait plutot etre envoye
+vec4 fogColor;
+
+varying float visibility;
+
 void main()
 {
     // ambient
@@ -44,9 +49,15 @@ void main()
     
     vec4 result = vec4((ambient + diffuse + specular) * u_Color.xyz,u_Color.w);
 	vec4 tc = texture2D(u_Texture, uv);
-	/*
-	if (tc.a < 0.5)
+	
+	if (tc.a == 0)
 		discard;
-	*/
-	gl_FragColor = result * tc;
+	
+	
+	vec4 finalTex = result * tc;
+	
+	fogColor = vec4(0.2, 0.2, 0.6, 1.0);
+	
+	gl_FragColor = mix(fogColor, finalTex, visibility);
+	
 }

@@ -22,6 +22,7 @@
 class AnimMoveAction : public AnimAction {
 	public:
 		void Action(glm::mat4& mat);
+		inline AnimMoveAction(glm::vec3 position) : AnimAction(position) {};
 };
 
 #endif // ANIMMOVEACTION_H

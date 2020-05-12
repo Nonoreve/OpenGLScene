@@ -103,6 +103,8 @@ ObjMesh::ObjMesh(const char * path) : Geometry() {
 	m_normals = (float*)malloc(sizeof(float) * 3 * 3 * o_normals.size());
 	m_uvs = (float*)malloc(sizeof(float) * 2 * 3 * o_uvs.size());
 
+	//Possiblement optimisable mais simple et marche
+
 	int j = 0;
 	for (int i = 0; i < o_vertices.size(); i++) {
 		m_vertices[j] = o_vertices[i].x;
@@ -130,5 +132,5 @@ ObjMesh::ObjMesh(const char * path) : Geometry() {
 		m_uvs[j] = o_uvs[i].y;
 		j++;
 	}
-	std::cout << "Loaded " << m_nbVertices << " vertices " << std::endl;
+	//std::cout << "Loaded " << m_nbVertices << " vertices " << std::endl;
 }

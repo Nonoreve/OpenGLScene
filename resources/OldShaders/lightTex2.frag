@@ -31,7 +31,7 @@ void main()
     //float diffStrength = 1.0
 	float diffStrength = u_K.y;
 	
-	vec3 diffuse = diff * u_LightColor *diffStrength;
+	vec3 diffuse = diff * u_LightColor *diffStrength ;
     
     // specular
     //float specularStrength = 0.5;
@@ -44,9 +44,7 @@ void main()
     
     vec4 result = vec4((ambient + diffuse + specular) * u_Color.xyz,u_Color.w);
 	vec4 tc = texture2D(u_Texture, uv);
-	/*
 	if (tc.a < 0.5)
 		discard;
-	*/
 	gl_FragColor = result * tc;
 }
