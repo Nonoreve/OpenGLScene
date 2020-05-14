@@ -47,8 +47,12 @@ Shader* setupShaders(const char* vertexPath, const char* fragmentPath, unsigned 
 	va_start(args, count);
 	FILE* fragmentShader = fopen(fragmentPath, "r");
 	FILE* vertexShader = fopen(vertexPath, "r");
-	if(!fragmentShader || !vertexShader) {
-		std::cerr << "[File Error] can't open shader" << std::endl;
+	if(!fragmentShader) {
+		std::cerr << "[File Error] can't open shader " << fragmentPath << std::endl;
+		//exit(1);
+	}
+	if(!vertexShader) {
+		std::cerr << "[File Error] can't open shader " << vertexPath << std::endl;
 		//exit(1);
 	}
 
