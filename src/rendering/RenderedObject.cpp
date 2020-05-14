@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+/*
+Classe gérant l'héritage de chacun des objet et leur affichage
+*/
+
 #include "rendering/RenderedObject.h"
 
 #include <algorithm>

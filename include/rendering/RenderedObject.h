@@ -43,7 +43,7 @@ class RenderedObject {
 		std::vector<RenderedObject*> m_Children;
 		std::vector<Animation*> m_AnimChilds;
 
-		void CreerBuffer(const char* imgName);// TODO remove ONLY KEEP isVisible = true;
+		//void CreerBuffer(const char* imgName);// TODO remove ONLY KEEP isVisible = true;
 
 	public:
 		inline RenderedObject() : m_Transform(glm::mat4(1.0f)), m_Visible(false) {};
