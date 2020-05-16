@@ -25,13 +25,17 @@ Features :
 * Recursive Scene Objects  
 * Controllable Camera  
 **f** to switch controllable/traveling camera  
+**t** to switch wireframe mode
 **Right click** to orient  
 **ZQSD** to move around  
 **Space** and **<** (less) to move up and down  
 * OBJ File loader  
+* Fong light system
+* Fog
+* Dynamic cross-dimensional real-time full-featured futuristic portal
 
 Installation :  
 * Execute `cmake` with your target platform build
-* For windows set the target directory as build
+* For windows set the target directory as build. Warning due to some strange git or windows stuff, the encoding changes when pulling and need to be set to UNIX (LF) mode.
 * For linux you can let the default target. WARNING some linux dependencies in `CMakeLists.txt` have been changed from /usr to /usr/lib/x86_64-linux-gnu to work on my computer. May need to be changed. 
 * Compile with make for the ressources to be generated at the right place.
