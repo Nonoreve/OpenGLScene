@@ -25,7 +25,7 @@ Features :
 * Recursive Scene Objects  
 * Controllable Camera  
 **f** to switch controllable/traveling camera  
-**t** to switch wireframe mode
+**t** to switch wireframe mode  
 **Right click** to orient  
 **ZQSD** to move around  
 **Space** and **<** (less) to move up and down  
