@@ -36,6 +36,6 @@ Features :
 
 Installation :  
 * Execute `cmake` with your target platform build
-* For windows set the target directory as build. Warning due to some strange git or windows stuff, the encoding changes when pulling and need to be set to UNIX (LF) mode.
+* For windows set the target directory as build. Configure /bin. Warning due to some strange git or windows stuff, the encoding changes when pulling and need to be set to UNIX (LF) mode.
 * For linux you can let the default target. WARNING some linux dependencies in `CMakeLists.txt` have been changed from /usr to /usr/lib/x86_64-linux-gnu to work on my computer. May need to be changed. 
 * Compile with `make` command for the ressources to be generated at the right place.
